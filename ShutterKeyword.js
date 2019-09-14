@@ -10,7 +10,7 @@
 // ==/UserScript==
 
 (() => {
-  
+
     setTimeout(function() {
 
     let keywords = document.querySelectorAll('.C_a_c')[0].children[0].children[0].children,
@@ -26,12 +26,12 @@
     parent.appendChild(newKeywords);
     parent.removeChild(keys);
 
-    document.body.innerHTML = document.body.innerHTML.replace('By', 'Loshara:');  
-    document.body.innerHTML = document.body.innerHTML.replace('Related keywords', 'Keywords for pizding');  
-    document.body.innerHTML = document.body.innerHTML.replace('Similar images', 'Ostalnoe govno'); 
+    document.body.innerHTML = document.body.innerHTML.replace('By ', 'Loshara:');
+    document.body.innerHTML = document.body.innerHTML.replace('By', 'Loshara:');
+    document.body.innerHTML = document.body.innerHTML.replace('Related keywords', 'Keywords for pizding');
+    document.body.innerHTML = document.body.innerHTML.replace('Similar images', 'Ostalnoe govno');
 
-    }, 1700); 
+    }, 1700);
 
 })();
-
 
