@@ -1,62 +1,36 @@
 // ==UserScript==
-// @name         ShutterKeyword
-// @namespace
-// @version      1.0
-// @description  Extract the keyword from Shutter Stock Preview Page
-// @author       Satinka
-// @match        https://www.shutterstock.com/*image-photo*
-// @match        https://www.shutterstock.com/image-vector*
-// @match        https://www.shutterstock.com/image-illustration*
-// @copyright    2016, Naphong
-// @require      http://code.jquery.com/jquery-latest.min.js
-// @grant        none
-
-
-
+// @name          Shutterstock Keywords Pizding
+// @author        Freem
+// @source        https://raw.githubusercontent.com/cryptonoise/ss/master/ShutterKeyword.js
+// @version       0.1
+// @description   Pizding image keywords
+// @include       https://www.shutterstock.com/image-photo/*
+// @include       https://www.shutterstock.com/image-vector/*
+// @include       https://www.shutterstock.com/image-illustration/*
 // ==/UserScript==
-/* jshint -W097 */
-'use strict';
 
-// =========== PARAMETERS ===========
+(() => {
+  
+    setTimeout(function() {
+
+    let keywords = document.querySelectorAll('.C_a_c')[0].children[0].children[0].children,
+        newKeywords = document.createElement("p"),
+        keys = document.querySelector(".C_a_c"),
+        parent = keys.parentNode;
+
+    keywords = [...keywords].map(k => k.innerText).map(a => `<a href="/search/${a}">${a}</a>`);
+
+    newKeywords.innerHTML = `${keywords.length} keywords:<br>${keywords.join(', ')}`;
+    newKeywords.style.cssText = 'padding-left: 14px; text-align: left; line-height: 150%';
+
+    parent.appendChild(newKeywords);
+    parent.removeChild(keys);
+
+    document.body.innerHTML = document.body.innerHTML.replace('Related keywords', 'Keywords For Pizding');      
+      
+    //Two seconds will elapse and Code will execute.
+    }, 1500); 
+  
+})();
 
 
-
-//===================================
-
-var $j = jQuery.noConflict();
-
-$j(document).ready(function() {
-    CreateStyles(); 
-    
-    var a = '';
-    $j.each( $j('.product-page-keywords'), function(i, left) {
-       $j('a', left).each(function() {
-           a+=$j(this).text()+', ';
-       });
-    });
-    
-    $j('.product-page-keywords').html('<div class="titleKeyword">Keyword here</div><div class="txtKeyword">' + a + '</div>');
-    $j('.product-page-keywords').removeClass();
-});
-
-function CreateStyles() {
-    var sheet = (function() {
-        var style = document.createElement("style");
-        style.appendChild(document.createTextNode(""));
-        
-        document.head.appendChild(style);
-        return style.sheet;
-    })(); 
-        
-    var txtKeywordStyle = "padding:5px; margin:15px; border-radius: 25px; border: 2px solid #73AD21;";
-    addCSSRule(sheet, ".txtKeyword", txtKeywordStyle, 0);
-}
-
-function addCSSRule(sheet, selector, rules, index) {
-	if("insertRule" in sheet) {
-		sheet.insertRule(selector + "{" + rules + "}", index);
-	}
-	else if("addRule" in sheet) {
-		sheet.addRule(selector, rules, index);
-	}
-}
