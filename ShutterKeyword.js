@@ -26,6 +26,7 @@
     parent.removeChild(keys);
 
     document.body.innerHTML = document.body.innerHTML.replace('By', 'Loshara:');  
+    document.body.innerHTML = document.body.innerHTML.replace('By ', 'Loshara:'); 
     document.body.innerHTML = document.body.innerHTML.replace('Related keywords', 'Keywords for pizding');  
     document.body.innerHTML = document.body.innerHTML.replace('Similar images', 'Ostalnoe govno'); 
 
