@@ -28,7 +28,6 @@
 
     document.body.innerHTML = document.body.innerHTML.replace('Related keywords', 'Keywords For Pizding');      
       
-    //Two seconds will elapse and Code will execute.
     }, 1500); 
   
 })();
