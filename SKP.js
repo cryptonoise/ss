@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name          Shutterstock Keywords Pizding
+// @name          SKP
 // @author        Freem
 // @source        https://raw.githubusercontent.com/cryptonoise/ss/master/SSKeywordsPizding.js
 // @version       0.3
-// @description   Pizding image keywords
+// @description   Shutterstock Keywords Pizding
 // @include       https://www.shutterstock.com/image-photo/*
 // @include       https://www.shutterstock.com/image-vector/*
 // @include       https://www.shutterstock.com/image-illustration/*
