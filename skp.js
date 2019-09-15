@@ -4,7 +4,7 @@
 // @version       0.4
 // @author        Freem
 // @source        https://raw.githubusercontent.com/cryptonoise/ss/master/skp.js
-// @icon          https://raw.githubusercontent.com/cryptonoise/ss/master/icon.png
+// @icon          https://raw.githubusercontent.com/cryptonoise/ss/master/skpicon.png
 // @include       https://www.shutterstock.com/image-photo/*
 // @include       https://www.shutterstock.com/image-vector/*
 // @include       https://www.shutterstock.com/image-illustration/*
