@@ -43,7 +43,7 @@
         "Same artist": "Тот же успешный стокер:",
         "Log in": "Ах ты, шалунишка!",
         "Create your account": "Атата по попке!",
-        "Create your free account": "Ах ты шалунишка!",  
+        "Create your free account": "Ах ты, шалунишка!",  
         "Download": "Атата по попке!",  
      };
  
