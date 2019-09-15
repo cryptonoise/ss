@@ -34,7 +34,7 @@
  
         replacements = { 
         "Welcome to Shutterstock – images for every project, all with worry-free licensing": "Shutterstock Keywords Pizding запущен!",
-        "Find your plan": "ПРЕВЕД! Логиниться не надо. Копируй ключи прям так!",
+        "Find your plan": "Я ЗНАЮ, ЧТО У ТЕБЯ НА УМЕ, ПРОКАЗНИК 😉",
         "Related keywords": "Keywords for pizding",
         "By": "Успешный стокер:",
         "By ": "Успешный стокер:",
