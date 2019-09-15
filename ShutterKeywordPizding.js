@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Shutterstock Keywords Pizding
 // @author        Freem
-// @source        https://raw.githubusercontent.com/cryptonoise/ss/master/ShutterKeyword.js
+// @source        https://raw.githubusercontent.com/cryptonoise/ss/master/ShutterKeywordPizding.js
 // @version       0.3
 // @description   Pizding image keywords
 // @include       https://www.shutterstock.com/image-photo/*
