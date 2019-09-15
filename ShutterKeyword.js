@@ -2,7 +2,7 @@
 // @name          Shutterstock Keywords Pizding
 // @author        Freem
 // @source        https://raw.githubusercontent.com/cryptonoise/ss/master/ShutterKeyword.js
-// @version       0.2
+// @version       0.3
 // @description   Pizding image keywords
 // @include       https://www.shutterstock.com/image-photo/*
 // @include       https://www.shutterstock.com/image-vector/*
@@ -13,6 +13,7 @@
   
     setTimeout(function() {
 
+      
     let keywords = document.querySelectorAll('.C_a_c')[0].children[0].children[0].children,
         newKeywords = document.createElement("p"),
         keys = document.querySelector(".C_a_c"),
@@ -25,13 +26,42 @@
     parent.appendChild(newKeywords);
     parent.removeChild(keys);
 
-    document.body.innerHTML = document.body.innerHTML.replace('By', 'Loshara:');  
-    document.body.innerHTML = document.body.innerHTML.replace('By ', 'Loshara:'); 
-    document.body.innerHTML = document.body.innerHTML.replace('Related keywords', 'Keywords for pizding');  
-    document.body.innerHTML = document.body.innerHTML.replace('Similar images', 'Ostalnoe govno'); 
+      
+    //Text replacer 
+    (function() {
+        var replacements, regex, key, textnodes, node, s; 
+ 
+        replacements = { 
+        "Welcome to Shutterstock – images for every project, all with worry-free licensing": "Shutterstock Keywords Pizding запущен!",
+        "Find your plan": "ПРЕВЕД! Логиниться не надо. Копируй ключи прям так!",
+        "Related keywords": "Keywords for pizding",
+        "By": "Успешный стокер:",
+        "By ": "Успешный стокер:",
+        "Similar images": "Мало спиздил? Вот еще фоточки:",
+        "Same artist": "Тот же успешный стокер:",
+        "Log in": "Ах ты шалунишка!",
+        "Create your account": "Атата по попке!",
+        "Create your free account": "Ах ты шалунишка!",  
+        "Download": "Атата по попке!",  
+     };
+ 
+    regex = {}; 
+        for (key in replacements) { 
+        regex[key] = new RegExp(key, 'g'); 
+    }
+ 
+        textnodes = document.evaluate( "//body//text()", document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null); 
+ 
+    for (var i = 0; i < textnodes.snapshotLength; i++) { 
+        node = textnodes.snapshotItem(i); 
+        s = node.data; 
+    for (key in replacements) { 
+        s = s.replace(regex[key], replacements[key]); 
+    }
+        node.data = s; 
+    }
+    })();
 
     }, 1700); 
 
 })();
-
-
