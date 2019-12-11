@@ -36,16 +36,21 @@ $j(document).ready(function() {
         var replacements, regex, key, textnodes, node, s; 
  
         replacements = { 
+        // English
         "Related keywords": "Keywords for pizding",
         "By": "📷 Успешный стокер:",
         "By ": "📷 Успешный стокер:",
         "Similar images": "Симиляры:",
         "Same model": "Та же модель:",
         "Same artist": "Тот же успешный стокер:",
-        "Log in": "Ах ты, шалунишка!",
-        "Create your account": "Атата по попке!",
-        "Create your free account": "Ах ты, шалунишка!",  
-        "Download": "Атата по попке!",  
+        "Log in": "Pizding mode = on",
+        "Create your account": "Ах ты, шалунишка!",
+        "Create your free account": "Pizding mode = on",  
+        "Download": "Ах ты, шалунишка!",  
+        // Russian
+        "Войти": "Pizding mode = on",
+        "Создайте аккаунт": "Ах ты, шалунишка!",
+        "Автор:": "📷 Успешный стокер:",
      };
  
     regex = {}; 
