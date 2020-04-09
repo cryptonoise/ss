@@ -1,9 +1,8 @@
 // ==UserScript==
 // @name          SKP
 // @description   Shutterstock Keywords Pizding
-// @version       0.5
+// @version       0.6
 // @author        Freem
-// @source        https://raw.githubusercontent.com/cryptonoise/ss/master/skp.js
 // @icon          https://raw.githubusercontent.com/cryptonoise/ss/master/skpicon.png
 // @match         https://www.shutterstock.com/*image-photo*
 // @match         https://www.shutterstock.com/*image-vector*
@@ -15,21 +14,21 @@
 
 'use strict';
 
+
 var $j = jQuery.noConflict();
 
-$j(document).ready(function() {
-    setTimeout(function() {
-        var a = '';
-        $j.each( $j('[data-automation="ExpandableKeywordsList_container_div"'), function(i, left) {
-            $j('a', left).each(function() {
-                a+=$j(this).text()+', ';
-            });
-        });
+    $j(document).ready(function() {
+    		setTimeout(function() {
+        		var a = '';
+        		$j.each( $j('.oc_x_c'), function(i, left) {
+            		$j('a', left).each(function() {
+                		a+=$j(this).text()+', ';
+            		});
+        		});
         console.log(a);
-        $j('[class="C_a_c"]').css({ height: "100px" });
-        $j('[class="C_a_c"]').html('<div class="row" style="position: relative;height:150px;width:100%;padding: 10px 10px 10px 30px;">' + a + '</div>');
-
-
+        		$j('[class="oc_x_g"]').css({ height: "100px" });
+        		$j('[class="oc_x_g"]').html('<div class="row" style="position: relative;height:150px;width:100%;color:green;padding: 10px 10px 10px 10px;">' + a + '</div>');
+          
 
     //Text replacer 
     (function() {
@@ -72,5 +71,5 @@ $j(document).ready(function() {
     }
     })();
 
-    }, 1900);
+    }, 2000);
 });
