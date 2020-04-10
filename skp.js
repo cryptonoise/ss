@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          SKP
 // @description   Shutterstock Keywords Pizding
-// @version       0.6
+// @version       0.7
 // @author        Freem
 // @icon          https://raw.githubusercontent.com/cryptonoise/ss/master/skpicon.png
 // @match         https://www.shutterstock.com/*image-photo*
@@ -14,7 +14,7 @@
 
 'use strict';
 
-
+// Преобразователь ключей
 var $j = jQuery.noConflict();
 
     $j(document).ready(function() {
@@ -28,9 +28,27 @@ var $j = jQuery.noConflict();
         console.log(a);
         		$j('[class="oc_x_g"]').css({ height: "100px" });
         		$j('[class="oc_x_g"]').html('<div class="row" style="position: relative;height:150px;width:100%;color:green;padding: 10px 10px 10px 10px;">' + a + '</div>');
-          
+ 
 
-    //Text replacer 
+          
+// Вставить ключи в начало страницы       
+let div = document.createElement('div');
+		div.className = "nkeys";
+		div.innerHTML = ('<center><div class="row"  style="position: relative;height:150px;width:100%;color:green;padding: 50px 10px 10px 10px;">' + a + '</div></center>');  
+		document.body.prepend(div);
+		div.before(document.createElement('hr'))
+		div.after(document.createElement('hr'))
+          
+// Заголовок страницы 
+var p = document.createElement('p');
+		document.body.prepend(p);
+var em = document.createElement('em');
+		em.append('Keywords for pizding'); 
+    p.innerHTML = (
+			'<center><b><H3><div class="nkeystitle" style="color:#cf1d11; padding: 15px 10px 10px 10px;text-shadow: 0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaa, 0 6px 1px rgba(0,0,0,.1), 0 0 5px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.2), 0 20px 20px rgba(0,0,0,.15);">' + "KEYWORDS FOR PIZDING" + '</div></H3></b></center>'
+		);      
+
+//Заменитель текста
     (function() {
         var replacements, regex, key, textnodes, node, s; 
  
@@ -71,5 +89,5 @@ var $j = jQuery.noConflict();
     }
     })();
 
-    }, 2000);
+    }, 800);
 });
