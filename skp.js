@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          SKP
 // @description   Shutterstock Keywords Pizding
-// @version       0.8.1
+// @version       0.8
 // @author        Freem
 // @icon          https://raw.githubusercontent.com/cryptonoise/ss/master/skpicon.png
 // @match         https://www.shutterstock.com/*image-photo*
@@ -45,7 +45,7 @@ var p = document.createElement('p');
 var em = document.createElement('em');
 		em.append('SKP'); 
     p.innerHTML = (
-			'<center><b><H3><div class="nkeystitle" style="color:#cf1d11; padding: 15px 10px 10px 10px;text-shadow: 0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaa, 0 6px 1px rgba(0,0,0,.1), 0 0 5px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.2), 0 20px 20px rgba(0,0,0,.15);">' + "Sutterstock Keywords Pizding" + '</div></H3></b></center>'
+			'<center><b><H3><div class="nkeystitle" style="color:#cf1d11; padding: 15px 10px 10px 10px;text-shadow: 0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaa, 0 6px 1px rgba(0,0,0,.1), 0 0 5px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.2), 0 20px 20px rgba(0,0,0,.15);">' + "Shutterstock Keywords Pizding" + '</div></H3></b></center>'
 		);      
 
 // Стиль ID фото
