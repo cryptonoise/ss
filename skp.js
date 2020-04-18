@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          SKP
 // @description   Shutterstock Keywords Pizding
-// @version       0.8
+// @version       0.8.1
 // @author        Freem
 // @icon          https://raw.githubusercontent.com/cryptonoise/ss/master/skpicon.png
 // @match         https://www.shutterstock.com/*image-photo*
@@ -51,7 +51,7 @@ var em = document.createElement('em');
 // Стиль ID фото
 var photoid = document.querySelector('.m_b_a');
 		//idbold.style.color = 'red';
-		photoid.style.cssText = "color: red; font-size:22px;"; 
+		photoid.style.cssText = "color: red; font-size:16px;"; 
           
 //Заменитель текста
     (function() {
