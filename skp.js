@@ -15,7 +15,7 @@
 
 'use strict';
 
-// Преобразователь ключей
+// Ловец ключей
 var $j = jQuery.noConflict();
 
     $j(document).ready(function() {
