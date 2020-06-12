@@ -37,15 +37,14 @@ let div = document.createElement('div');
 		div.before(document.createElement('hr'))
 		div.after(document.createElement('hr'))
     
-// Заголовок страницы 
+// SKP logo 
 var p = document.createElement('p');
 		document.body.prepend(p);
 var em = document.createElement('em');
 		em.append('SKP'); 
     p.innerHTML = (
 			'<center><b><H3><div class="nkeystitle" style="color:#cf1d11; padding: 15px 10px 10px 10px;text-shadow: 0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaa, 0 6px 1px rgba(0,0,0,.1), 0 0 5px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.2), 0 20px 20px rgba(0,0,0,.15);">' + "Shutterstock Keywords Pizding" + '</div></H3></b></center>'
-		);      
-
+		);
           
 // Превью в начале страницы     
 var findimage = document.querySelector('.m_j_g')
@@ -63,7 +62,7 @@ var title = document.querySelector('.m_b_b');
 		title.style.cssText = "font-size:25px;"; 
 		var cln = title.cloneNode(true);
 		div.before(cln); 
-    cln.style.cssText = "text-align: center; background-color: #feeff4;color: #49152c;padding: 30px 50px;font-family: 'Lato', sans-serif;font-size: 25px;";
+    cln.style.cssText = "text-align: center; background-color: #feeff4; color: #49152c;padding: 30px 50px;font-family: 'Lato', sans-serif;font-size: 25px; border-style: dotted none dotted none; ";
 
 // Стиль ID
 var photoid = document.querySelector('.m_b_a');
