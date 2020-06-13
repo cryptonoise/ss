@@ -7,7 +7,7 @@
 // @match					https://www.shutterstock.com/*image-photo*
 // @match					https://www.shutterstock.com/*image-vector*
 // @match					https://www.shutterstock.com/*image-illustration*
-// @match					https://www.shutterstock.com/*video*
+// @exclude				https://www.shutterstock.com/*video*
 // @exclude				https://www.shutterstock.com/*search*
 // @require				http://code.jquery.com/jquery-latest.min.js
 // @grant         none
@@ -28,7 +28,7 @@ var $j = jQuery.noConflict();
         		});
         console.log(key);
         		$j('[class="C_a_c"]').css({ height: "100px" });
-        		$j('[class="C_a_c"]').html('<div class="keys" style="position: relative;height:100px;width:100%;color:green;padding: 5px 5px 5px 5px;">' + key + '</div>');   
+        		$j('[class="C_a_c"]').html('<div class="keys" style="position: relative;height:100%;width:100%;color:green;padding: 5px 5px 5px 5px;">' + key + '</div>');   
 
 // Скрыть весь контент
 document.getElementById('content').style.display = 'none';    
