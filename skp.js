@@ -56,7 +56,7 @@ function ButtonClickAction () {
 // Вставить ключи в начало страницы       
 let nkeys = document.createElement('div');
 		nkeys.innerHTML = ('<div class="back" style="background-color: #feeff4; width:100%;"</div>'
-                       + '<center><p class="keys" style="position: relative;height:100px;width:90%;color:green;padding: 25px 10px 10px 10px;font-family: sans-serif;">'
+                       + '<center><p class="keys" style="position: relative;height:100%;width:90%;color:green;padding: 25px 10px 10px 10px;font-family: sans-serif;">'
                        + key + '</p></center>');  
 		document.body.prepend(nkeys);
 		nkeys.before(document.createElement('hr'))
