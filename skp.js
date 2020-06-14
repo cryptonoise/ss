@@ -7,8 +7,8 @@
 // @match					https://www.shutterstock.com/*image-photo*
 // @match					https://www.shutterstock.com/*image-vector*
 // @match					https://www.shutterstock.com/*image-illustration*
-// @exclude				https://www.shutterstock.com/*video*
-// @exclude				https://www.shutterstock.com/*search*
+// @exclude				https://www.shutterstock.com/video*
+// @exclude				https://www.shutterstock.com/search*
 // @require				http://code.jquery.com/jquery-latest.min.js
 // @grant         none
 // ==/UserScript==
