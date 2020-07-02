@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          SKP
 // @description   Shutterstock Keywords Pizding
-// @version       1.1
+// @version       1.2
 // @author        Freem
 // @icon          https://raw.githubusercontent.com/cryptonoise/ss/master/skpicon.png
 // @match					https://www.shutterstock.com/*image-photo*
@@ -63,7 +63,7 @@ let nkeys = document.createElement('div');
 		nkeys.after(document.createElement('hr'))
           
 // Превью в начале страницы     
-var findimage = document.querySelector('.m_j_g')
+var findimage = document.querySelector('.m_k_g')
 var imageSrc = findimage.getAttribute('src');
 		function createImageHtml() {
 				return `<div>${imageSrc}</div>`;
