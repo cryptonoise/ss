@@ -23,7 +23,7 @@
         "By": "Успешный стокер:",
         "By ": "Успешный стокер:",
         "stock photo": "",  
-        "Royalty-free": "Stock photo",
+        "Royalty-free": "",
           
      };
  
