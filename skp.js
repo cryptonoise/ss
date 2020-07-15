@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          SKP
 // @description   Shutterstock Keywords Pizding
-// @version       1.2
+// @version       1.3
 // @author        Freem
 // @icon          https://raw.githubusercontent.com/cryptonoise/ss/master/skpicon.png
 // @match					https://www.shutterstock.com/*image-photo*
@@ -116,12 +116,13 @@ var title = document.querySelector('.m_b_b');
 		title.style.cssText = "font-size:25px;"; 
 		var titlecln = title.cloneNode(true);
 		nkeys.before(titlecln); 
-    titlecln.style.cssText = "text-align: center; background-color: #feeff4; color: #49152c;padding: 30px 50px;font-family: 'Lato', sans-serif;font-size: 25px; border-style: dotted none dotted none; ";
+    titlecln.style.cssText = "text-align: center; background-color: #feeff4; color: #49152c; padding: 30px 50px;font-family: 'Lato', sans-serif;font-size: 25px; border-style: dotted none dotted none; ";
 
 // Contributor
 var contributor = document.querySelector('.oc_B_a');
+var contributorstyle = document.querySelector('.b_t_e').style.cssText = "color: red";
 var newcontributor = contributor.cloneNode(true);    
-    newcontributor.style.cssText = "background-color: #feeff4; justify-content: center; align-items: center; display: flex; padding: 20px 0px 20px 0px; ";
+    newcontributor.style.cssText = "background-color: #feeff4;  justify-content: center; align-items: center; display: flex; padding: 20px 0px 20px 0px; font-size: 45px; ";
 		preview.before(newcontributor);
           
 // Photo ID
