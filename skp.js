@@ -15,6 +15,34 @@
 
 'use strict';
 
+//Text replacer 
+    (function() {
+        var replacements, regex, key, textnodes, node, s; 
+        replacements = { 
+
+        "By": "Успешный стокер:",
+        "By ": "Успешный стокер:",
+        "stock photo": "",  
+        "Royalty-free": "Stock photo",
+          
+     };
+ 
+    regex = {}; 
+        for (key in replacements) { 
+        regex[key] = new RegExp(key, 'g'); 
+    }
+        textnodes = document.evaluate( "//body//text()", document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null); 
+ 
+    for (var i = 0; i < textnodes.snapshotLength; i++) { 
+        node = textnodes.snapshotItem(i); 
+        s = node.data; 
+    for (key in replacements) { 
+        s = s.replace(regex[key], replacements[key]); 
+    }
+        node.data = s; 
+    }
+    })();
+
 // Ловец ключей
 var $j = jQuery.noConflict();
 
@@ -72,7 +100,7 @@ let preview = document.createElement('preview');
 		preview.className = "npreview";
 		preview.innerHTML = ('<center><div class="imma" style="background-color: #feeff4;"><img src=' + imageSrc + ' style="margin:30px 0px 30px 0px; height:420px" ></div></center>');     
     nkeys.before(preview); 
-      
+          
 // SKP logo 
 var skp = document.createElement('p');
 		document.body.prepend(skp);
@@ -89,15 +117,27 @@ var title = document.querySelector('.m_b_b');
 		var titlecln = title.cloneNode(true);
 		nkeys.before(titlecln); 
     titlecln.style.cssText = "text-align: center; background-color: #feeff4; color: #49152c;padding: 30px 50px;font-family: 'Lato', sans-serif;font-size: 25px; border-style: dotted none dotted none; ";
-      
-// Стиль ID
+
+// Contributor
+var contributor = document.querySelector('.oc_B_a');
+var newcontributor = contributor.cloneNode(true);    
+    newcontributor.style.cssText = "background-color: #feeff4; justify-content: center; align-items: center; display: flex; padding: 20px 0px 20px 0px; ";
+		preview.before(newcontributor);
+          
+// Photo ID
 var photoid = document.querySelector('.m_b_a');
 		photoid.style.cssText = "color: red; font-size:16px;"; 
-
+var newphotoid = photoid.cloneNode(true);
+    newphotoid.style.cssText = "text-align: center; background-color: #feeff4; color: #49152c; font-family: 'Lato', sans-serif;font-size: 15px;";
+		preview.before(newphotoid);     
+          
+   
 let search = document.createElement('div');
 		nkeys.innerHTML = ('<div class="back" style="background-color: #feeff4; width:100%;"</div>'
                        + '<center><p class="keys" style="position: relative;height:100px;width:90%;color:green;padding: 25px 10px 10px 10px;font-family: sans-serif;">'
-                       + a + '</p></center>');       
+                       + a + '</p></center>');
+
+
      
 //Задержка перед выполнением
     }, 200);
