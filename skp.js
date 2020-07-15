@@ -120,16 +120,16 @@ var title = document.querySelector('.m_b_b');
 
 // Contributor
 var contributor = document.querySelector('.oc_B_a');
-var contributorstyle = document.querySelector('.b_t_e').style.cssText = "color: red";
+var contributorstyle = document.querySelector('.b_t_e').style.cssText = "font-weight: bold;";
 var newcontributor = contributor.cloneNode(true);    
-    newcontributor.style.cssText = "background-color: #feeff4;  justify-content: center; align-items: center; display: flex; padding: 20px 0px 20px 0px; font-size: 45px; ";
+    newcontributor.style.cssText = "background-color: #feeff4; justify-content: center; align-items: center; display: flex; padding: 20px 0px 20px 0px; font-size: 45px; font-family: 'Lato', sans-serif;";
 		preview.before(newcontributor);
           
 // Photo ID
 var photoid = document.querySelector('.m_b_a');
 		photoid.style.cssText = "color: red; font-size:16px;"; 
 var newphotoid = photoid.cloneNode(true);
-    newphotoid.style.cssText = "text-align: center; background-color: #feeff4; color: #49152c; font-family: 'Lato', sans-serif;font-size: 15px;";
+    newphotoid.style.cssText = "text-align: center; background-color: #feeff4; color: #49152c; font-family: 'Lato', sans-serif; font-size: 15px; font-weight: bold;";
 		preview.before(newphotoid);     
           
    
