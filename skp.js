@@ -14,7 +14,7 @@
 // ==/UserScript==
 
 
-(() => {
+(() => { 
     const $ = document.querySelector.bind(document);
     const imageUrl = $('.m_k_a99ec').children[0].src;
 
@@ -54,7 +54,7 @@
 
     let resultList = '';
     if (soldWords.length > 0) {
-        resultList += `<code><b>Продаваемые ключи:</b></code><br><span style='color:FireBrick'>${soldWords}<span>`;
+        resultList += `<code><b>Продаваемые ключи:</b></code><br><span style='color:FireBrick'>${soldWords}</span>`;
     }
 
     if (soldWords.length > 0 && notSoldWords.length > 0) {
@@ -62,7 +62,7 @@
     }
 
     if (notSoldWords.length > 0) {
-        resultList += `<span style='color:LightSeaGreen'>${notSoldWords}<span>`;
+        resultList += `<code><b>Ключи:</b></code><br><span style='color:LightSeaGreen'>${notSoldWords}</span>`;
     }
 
     fetch(imageUrl)
