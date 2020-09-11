@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          SKP
 // @description   Shutterstock Keywords Pizding
-// @version       1.5
+// @version       1.5.1
 // @author        Freem
 // @icon          https://raw.githubusercontent.com/cryptonoise/ss/master/skpicon.png
 // @match					https://www.shutterstock.com/*image-photo*
@@ -16,7 +16,7 @@
 
 (() => { 
     const $ = document.querySelector.bind(document);
-    const imageUrl = $('.m_k_a99ec').children[0].src;
+    const imageUrl = $('.m_l_a99ec').children[0].src;
 
     let keywords = $('.C_a_03061').firstElementChild.firstElementChild.children,
         newKeywords = document.createElement("div"),
