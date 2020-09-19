@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          SKP
 // @description   Shutterstock Keywords Pizding
-// @version       1.5.1
+// @version       1.5.2
 // @author        Freem
 // @icon          https://raw.githubusercontent.com/cryptonoise/ss/master/skpicon.png
 // @match					https://www.shutterstock.com/*image-photo*
@@ -14,7 +14,12 @@
 // ==/UserScript==
 
 
+
 (() => { 
+
+    document.getElementsByClassName('m_h_db022')[0].style.visibility = 'hidden';
+  
+  
     const $ = document.querySelector.bind(document);
     const imageUrl = $('.m_l_a99ec').children[0].src;
 
@@ -86,7 +91,7 @@
         position: absolute;
         padding: 20px;
         right: 315px;
-        top: 250px;
+        top: 130px;
         z-index: 10;`;
     my_parent.appendChild(newKeywords);
 
