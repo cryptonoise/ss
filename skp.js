@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          SKP
 // @description   Shutterstock Keywords Pizding
-// @version       1.5.2
+// @version       1.6
 // @author        Freem
 // @icon          https://raw.githubusercontent.com/cryptonoise/ss/master/skpicon.png
 // @match					https://www.shutterstock.com/*image-photo*
@@ -16,7 +16,8 @@
 
 
 (() => { 
-
+  
+  
     document.getElementsByClassName('m_h_db022')[0].style.visibility = 'hidden';
   
   
@@ -28,6 +29,7 @@
         lastModifiedDiv = document.createElement("div"),
         my_parent = $('body');
 
+// Keywords as links
 //    const words = [...keywords].map(k => k.innerText).map(a => `<a href="/search/${a}">${a}</a>`);
     const words = [...keywords].map(k => k.innerText).map(a => `${a}`);
     let sortedIndex;
@@ -70,19 +72,20 @@
         resultList += `<code><b>Ключи:</b></code><br><span style='color:LightSeaGreen'>${notSoldWords}</span>`;
     }
 
-    fetch(imageUrl)
-    .then(response => {
-        const lastModified = response.headers.get('last-modified');
-        lastModifiedDiv.innerHTML = `<code><b>Возможная дата загрузки:</b></code> <br> ${lastModified}<br><br><br>`;
-        lastModifiedDiv.style.cssText = `margin-top: 20px;`
-        newKeywords.appendChild(lastModifiedDiv);
-  })
+// image date
+//    fetch(imageUrl)
+//    .then(response => {
+//        const lastModified = response.headers.get('last-modified');
+//        lastModifiedDiv.innerHTML = `<code><b>Возможная дата загрузки:</b></code> <br> ${lastModified}<br><br><br>`;
+//        lastModifiedDiv.style.cssText = `margin-top: 20px;`
+//        newKeywords.appendChild(lastModifiedDiv);
+//  })
 
     newKeywords.innerHTML = ('<center><b><H4><div class="skp"'
       + 'style="color:Maroon; text-shadow: 0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaa, 0 6px 1px rgba(0,0,0,.1),'
       + '0 0 5px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.2), 0 20px 20px rgba(0,0,0,.15);">' 
       + "Shutterstock Keywords Pizding" + '</div></H4></b></center>'
-		  + `<br><hr><br>${keywords.length} + (${sortedIndex}) keywords:<br><br>${resultList}`);
+		  + `<br><hr><br><b><code>Всего ключей: </b></code>${keywords.length}<br><b><code>Продаваемых: </b></code>${sortedIndex}<br><br>${resultList}`);
     newKeywords.style.cssText = `
         text-align: left;
         width: 420px;
@@ -112,6 +115,7 @@
 
         "By": "Успешный стокер:",
         "By ": "Успешный стокер:",
+        "undefined": "Нет :(",
         "stock photo": "",  
         "Royalty-free": "",
         "Автор:": "Успешный стокер:",
@@ -138,4 +142,3 @@
   
 })();
   
-
