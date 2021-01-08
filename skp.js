@@ -58,7 +58,7 @@
 
     let resultList = '';
     if (soldWords.length > 0) {
-        resultList += `<code><b>Продаваемые ключи:</b></code><br><span style='color:FireBrick'>${soldWords}</span>`;
+        resultList += `<center><b>Продаваемые ключи</b></center><br><span style='color:FireBrick'>${soldWords}</span>`;
     }
 
     if (soldWords.length > 0 && notSoldWords.length > 0) {
@@ -66,14 +66,14 @@
     }
 
     if (notSoldWords.length > 0) {
-        resultList += `<code><b>Ключи:</b></code><br><span style='color:LightSeaGreen'>${notSoldWords}</span>`;
+        resultList += `<center><b>Ключи</b></center><br><span style='color:LightSeaGreen'>${notSoldWords}</span>`;
     }
 
     newKeywords.innerHTML = ('<center><b><H4><div class="skp"'
       + 'style="color:Maroon; text-shadow: 0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaa, 0 6px 1px rgba(0,0,0,.1),'
       + '0 0 5px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.2), 0 20px 20px rgba(0,0,0,.15);">' 
       + "Shutterstock Keywords Pizding" + '</div></H4></b></center>'
-		  + `<br><hr><br><b><code>Всего ключей: </b></code>${keywords.length}<br><b><code>Продаваемых: </b></code>${sortedIndex}<br><br>${resultList}`);
+		  + `<br><hr><b><code>Всего ключей: </b></code>${keywords.length}<br><b><code>Продаваемых: </b></code>${sortedIndex}<br><hr>${resultList}`);
     newKeywords.style.cssText = `
         text-align: left;
         width: 420px;
