@@ -90,6 +90,6 @@
     setTimeout(function(){
     document.body.innerHTML = document.body.innerHTML.replace(/By /g, "Успешный стокер: ");
 		document.body.innerHTML = document.body.innerHTML.replace(/undefined/g, "нет :(");
-      }, 1000);  
+      }, 3000);  
 
 })();
