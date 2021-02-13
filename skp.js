@@ -15,8 +15,8 @@
 
 (() => {
 
+// hide unnecessary blocks
     document.getElementsByClassName('m_h_db022')[0].style.visibility = 'hidden';
-
 
     const $ = document.querySelector.bind(document);
     const imageUrl = $('.m_l_a99ec').children[0].src;
@@ -26,7 +26,7 @@
         lastModifiedDiv = document.createElement("div"),
         my_parent = $('body');
 
-// Keywords as links
+// keywords as links
 //    const words = [...keywords].map(k => k.innerText).map(a => `<a href="/search/${a}">${a}</a>`);
     const words = [...keywords].map(k => k.innerText).map(a => `${a}`);
     let sortedIndex = 'нет 😔';
