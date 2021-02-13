@@ -81,7 +81,7 @@
         line-height: 170%;
         position: absolute;
         padding: 20px;
-        right: 315px;
+        right: 15%;
         top: 130px;
         z-index: 10;`;
     my_parent.appendChild(newKeywords);
