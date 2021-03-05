@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          SKP
 // @description   Shutterstock Keywords Pizding
-// @version       1.7
+// @version       1.8
 // @author        Freem
 // @icon          https://raw.githubusercontent.com/cryptonoise/ss/master/skpicon.png
 // @match					https://www.shutterstock.com/*image-photo*
@@ -14,20 +14,18 @@
 // ==/UserScript==
 
 (() => {
-
-// hide unnecessary blocks
-    document.getElementsByClassName('m_h_db022')[0].style.visibility = 'hidden';
-
+  
+  // hide unnecessary blocks
+    document.getElementsByClassName('m_j_db022')[0].style.visibility = 'hidden';
+  
     const $ = document.querySelector.bind(document);
-    const imageUrl = $('.m_l_a99ec').children[0].src;
+    const imageUrl = $('.m_n_a99ec').children[0].src;
 
     let keywords = $('.C_a_03061').firstElementChild.firstElementChild.children,
         newKeywords = document.createElement("div"),
         lastModifiedDiv = document.createElement("div"),
         my_parent = $('body');
 
-// keywords as links
-//    const words = [...keywords].map(k => k.innerText).map(a => `<a href="/search/${a}">${a}</a>`);
     const words = [...keywords].map(k => k.innerText).map(a => `${a}`);
     let sortedIndex = 'нет 😔';
     for (let i = words.length - 1; i > 0; i--)
@@ -38,6 +36,7 @@
         }
     }
 
+
     let soldWords = '';
     let notSoldWords = '';
     for (let i = 0; i < words.length -1; i++) {
@@ -47,6 +46,8 @@
             notSoldWords += words[i] + ', ';
         }
     }
+
+
 
     if (soldWords.length > 0) {
         soldWords = soldWords.substring(0, soldWords.length-2);
@@ -85,5 +86,14 @@
         top: 130px;
         z-index: 10;`;
     my_parent.appendChild(newKeywords);
+
+    const button = document.getElementsByClassName('z_h_e');
+    console.log(button);
+
+    for(let i = 0; i < button.length -1; i++) {
+        button[i].addEventListener('click', event => {
+       button.innerHTML = `Click count: ${event.detail}`;
+     });
+    }
 
 })();
