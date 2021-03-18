@@ -14,9 +14,6 @@
 // ==/UserScript==
 
 (() => {
-
-    // hide unnecessary blocks
-    document.getElementsByClassName('m_l_db022')[0].style.visibility = 'hidden';
   
     let newKeywords = document.createElement("div"),
         lastModifiedDiv = document.createElement("div");
@@ -127,4 +124,7 @@
             querySelector.addEventListener('DOMSubtreeModified', debounceUpdateWords)
         }
     })
+  
+      // hide unnecessary blocks
+      //document.getElementsByClassName('m_l_db022')[0].style.visibility = 'hidden';
 })();
