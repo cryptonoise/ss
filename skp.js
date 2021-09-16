@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name                SKP
 // @description         Shutterstock Keywords Pizding
-// @version             1.9
+// @version             2.0
 // @author              Freem
 // @icon                https://raw.githubusercontent.com/cryptonoise/ss/master/skpicon.png
 // @match               https://www.shutterstock.com/*image-photo*
@@ -13,11 +13,12 @@
 // @grant               none
 // ==/UserScript==
 
-(() => {
-  
+(function() {
+    'use strict';
+
     let newKeywords = document.createElement("div"),
         lastModifiedDiv = document.createElement("div");
-  
+
         newKeywords.style.cssText = `
         text-align: left;
         width: 450px;
@@ -28,9 +29,9 @@
         right: 15%;
         top: 130px;
         z-index: 10;`;
-  
+
     document.querySelector('body').appendChild(newKeywords);
-  
+
     const getKeywords = () => document.querySelector('.C_a_03061')
 
     let updateWords = () => {
@@ -83,11 +84,11 @@
       + '0 0 5px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.2), 0 20px 20px rgba(0,0,0,.15);">'
       + "Shutterstock Keywords Pizding" + '</div></H4></b></center>'
           + `<br><hr><b><code>🗝 Всего ключей: </b></code>${keywords.length}<br><b><code>🔑 Продаваемых: </b></code>${sortedIndex}<br><hr>${resultList}`);
-      
+
         newKeywords.style.display='block';
 
     }
-    
+
     let shouldUpdate = false
     const debounceUpdateWords = () => {
         if(shouldUpdate) return
@@ -124,7 +125,7 @@
             querySelector.addEventListener('DOMSubtreeModified', debounceUpdateWords)
         }
     })
-  
+
       // hide unnecessary blocks
       //document.getElementsByClassName('m_l_db022')[0].style.visibility = 'hidden';
 })();
