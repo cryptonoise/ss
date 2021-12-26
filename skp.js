@@ -18,16 +18,16 @@
     let style = document.createElement('style');
     document.getElementsByTagName('head')[0].appendChild(style);
     style.innerHTML = ` 
-                       .insert_box {
-                        background: rgba(255, 255, 255, 0.70);
-                        line-height: 150%;
-                        padding: 20px;
-                        position: relative;
-												font-size: 12pt;
-                       }
-                       .sold-keys {
-                       	color: rgb(10, 171, 128);
-                       }
+      .insert_box {
+        background: rgba(255, 255, 255, 0.70);
+        line-height: 150%;
+        padding: 20px;
+        position: relative;
+        font-size: 12pt;
+                }
+      .sold-keys {
+        color: rgb(10, 171, 128);
+                }
     `;
 
     let json = document.querySelector('#__NEXT_DATA__').innerHTML;
@@ -64,8 +64,8 @@
       + '0 0 5px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.2), 0 20px 20px rgba(0,0,0,.15);">'
       + 'Shutterstock Keywords Pizding</div></H2></b></center>'
 
-     	+ `<br><b>🗝 Продаваемых ключей <span class="sold-keys">${sortedIndex}</span> из ${words.length}</b><br/>
-				 <span class="sold-keys">${soldWords}</span>${notSoldWords.trim().slice(0, -1)}`);
+      + `<br><b>🗝 Продаваемых ключей <span class="sold-keys">${sortedIndex}</span> из ${words.length}</b><br/>
+         <span class="sold-keys">${soldWords}</span>${notSoldWords.trim().slice(0, -1)}`);
 
     }, 500);
 
