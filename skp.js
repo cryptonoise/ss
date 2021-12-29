@@ -25,6 +25,7 @@
 				border-radius: 8px;
 				padding: 24px;
 				margin-bottom: 10px;
+				margin-top: 10px;
                 }
       .sold-keys {
         color: rgb(10, 171, 128);
