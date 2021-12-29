@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name                SKP
 // @description         Shutterstock Keywords Pizding
-// @version             2.3
+// @version             2.4
 // @author              Freem
 // @icon                https://raw.githubusercontent.com/cryptonoise/ss/master/skpicon.png
 // @match               https://www.shutterstock.com/*image-photo*
@@ -38,7 +38,6 @@
 				text-shadow:-2px -2px 0 cyan, 2px 2px 0 magenta;
 
 								}
-
     	`;
 	let json = document.querySelector('#__NEXT_DATA__').innerHTML;
 	let ssjson = JSON.parse(json);
@@ -60,14 +59,34 @@
 	for (let i = sortedIndex; i < words.length; i++) {
 		notSoldWords += `${words[i]}, `;
 	}
-	setTimeout(() => {
-		let newKeywordsAll = document.createElement("div");
-		newKeywordsAll.className = 'skp';
-		document.querySelector('.jss279').before(newKeywordsAll);
-		newKeywordsAll.innerHTML = `
+
+	function keysRefresh() {
+		setTimeout(() => {
+			let newKeywordsAll = document.createElement("div");
+			newKeywordsAll.className = 'skp';
+			document.querySelector('.jss279').before(newKeywordsAll);
+			newKeywordsAll.innerHTML = `
 						<b>🗝 Продаваемых ключей <span class="sold-keys">${sortedIndex}</span> из ${words.length}</b>
 						<br><span class="sold-keys">${soldWords}</span>${notSoldWords.trim().slice(0, -1)}
 						<div class="skp-logo">SHUTTERSTOCK KEYWORDS PIZDING</div>
 			`;
-	}, 1000);
+		}, 1000);
+	}
+
+	function clearCache() {
+		setTimeout(() => {
+			let newKeywordsAll = document.querySelector(".skp");
+			newKeywordsAll.innerHTML = '';
+		}, 1000);
+	}
+
+	keysRefresh();
+
+	function refresh() {
+		let url = window.location.pathname;
+		location.replace(url);
+	}
+
+	document.querySelector('head title').addEventListener('DOMSubtreeModified', refresh);
+	
 })();
