@@ -24,8 +24,7 @@
         font-size: 14pt;
 				border-radius: 8px;
 				padding: 24px;
-				margin-bottom: 10px;
-				margin-top: 10px;
+				margin-top: 24px;
 
                 }
       .sold-keys {
