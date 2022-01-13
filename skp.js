@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name                SKP
 // @description         Shutterstock Keywords Pizding
-// @version             2.4
+// @version             2.5
 // @author              Freem
 // @icon                https://raw.githubusercontent.com/cryptonoise/ss/master/skpicon.png
 // @match               https://www.shutterstock.com/*image-photo*
@@ -26,6 +26,7 @@
 				padding: 24px;
 				margin-bottom: 10px;
 				margin-top: 10px;
+
                 }
       .sold-keys {
         color: rgb(10, 171, 128);
@@ -64,7 +65,7 @@
 		setTimeout(() => {
 			let newKeywordsAll = document.createElement("div");
 			newKeywordsAll.className = 'skp';
-			document.querySelector('.jss279').before(newKeywordsAll);
+			document.querySelector('.jss143').after(newKeywordsAll);
 			newKeywordsAll.innerHTML = `
 						<b>🗝 Продаваемых ключей <span class="sold-keys">${sortedIndex}</span> из ${words.length}</b>
 						<br><span class="sold-keys">${soldWords}</span>${notSoldWords.trim().slice(0, -1)}
@@ -77,7 +78,7 @@
 		setTimeout(() => {
 			let newKeywordsAll = document.querySelector(".skp");
 			newKeywordsAll.innerHTML = '';
-		}, 1000);
+		}, 500);
 	}
 
 	keysRefresh();
