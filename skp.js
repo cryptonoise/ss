@@ -22,10 +22,12 @@
         line-height: 150%;
         position: relative;
         font-size: 14pt;
-				border-radius: 8px;
 				padding: 24px;
 				margin-top: 24px;
-
+				border-radius: 8px;
+				border-color: silver;
+				border-width: 1px;
+				border-style: solid;
                 }
       .sold-keys {
         color: rgb(10, 171, 128);
