@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name                SKP
 // @description         Shutterstock Keywords Pizding
-// @version             2.5
+// @version             2.6
 // @author              Freem
 // @icon                https://raw.githubusercontent.com/cryptonoise/ss/master/skpicon.png
 // @match               https://www.shutterstock.com/*image-photo*
@@ -14,6 +14,10 @@
 // ==/UserScript==
 (function() {
 	'use strict';
+  
+	$(".jss198").hide()
+  $(".jss7").hide()
+  
 	let style = document.createElement('style');
 	document.getElementsByTagName('head')[0].appendChild(style);
 	style.innerHTML = ` 
@@ -22,8 +26,8 @@
         line-height: 150%;
         position: relative;
         font-size: 14pt;
-				padding: 24px;
-				margin-top: 24px;
+				padding: 15px;
+				margin-bottom: 24px;
 				border-radius: 8px;
 				border-color: silver;
 				border-width: 1px;
@@ -66,7 +70,7 @@
 		setTimeout(() => {
 			let newKeywordsAll = document.createElement("div");
 			newKeywordsAll.className = 'skp';
-			document.querySelector('.jss143').after(newKeywordsAll);
+			document.querySelector('.jss198').before(newKeywordsAll);
 			newKeywordsAll.innerHTML = `
 						<b>🗝 Продаваемых ключей <span class="sold-keys">${sortedIndex}</span> из ${words.length}</b>
 						<br><span class="sold-keys">${soldWords}</span>${notSoldWords.trim().slice(0, -1)}
@@ -90,5 +94,7 @@
 	}
 
 	document.querySelector('head title').addEventListener('DOMSubtreeModified', refresh);
+    
+ 
 	
 })();
