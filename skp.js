@@ -75,7 +75,7 @@
 			newKeywordsAll.innerHTML = `
 						<b>🗝 Продаваемых ключей <span class="sold-keys">${sortedIndex}</span> из ${words.length}</b>
 						<br><span class="sold-keys">${soldWords}</span>${notSoldWords.trim().slice(0, -1)}
-						<div class="skp-logo">SHUTTERSTOCK KEYWORDS PIZDING</div>
+						<div class="skp-logo">SHUTTERSTOCK KEYWORDS PiZDING</div>
 			`;
 		}, 1000);
 	}
