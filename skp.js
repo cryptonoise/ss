@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name                SKP
 // @description         Shutterstock Keywords Pizding
-// @version             2.6
+// @version             2.7
 // @author              Freem
 // @icon                https://raw.githubusercontent.com/cryptonoise/ss/master/skpicon.png
 // @match               https://www.shutterstock.com/*image-photo*
@@ -26,7 +26,7 @@
         line-height: 150%;
         position: relative;
         font-size: 14pt;
-				padding: 15px;
+				padding: 15px 15px 2px 15px;
 				margin-bottom: 24px;
 				border-radius: 8px;
 				border-color: silver;
@@ -38,11 +38,12 @@
                 }
 
 			.skp-logo {
-    		font-size: 12px;
+    		font-size: 10px;
   			text-align: right;
 				color: #36363F;
-				text-shadow:-2px -2px 0 cyan, 2px 2px 0 magenta;
-
+				text-shadow: 0px 4px 3px rgba(0,0,0,0.4),
+                     0px 8px 13px rgba(0,0,0,0.1),
+                     0px 18px 23px rgba(0,0,0,0.1);
 								}
     	`;
 	let json = document.querySelector('#__NEXT_DATA__').innerHTML;
