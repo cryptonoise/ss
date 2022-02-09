@@ -97,5 +97,4 @@
 	document.querySelector('head title').addEventListener('DOMSubtreeModified', refresh);
     
  
-	
 })();
