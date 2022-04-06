@@ -71,7 +71,7 @@
 		setTimeout(() => {
 			let newKeywordsAll = document.createElement("div");
 			newKeywordsAll.className = 'skp';
-			document.querySelector('.jss134').before(newKeywordsAll);
+			document.querySelector('.jss167').before(newKeywordsAll);
 			newKeywordsAll.innerHTML = `
 						<b>🗝 Продаваемых ключей <span class="sold-keys">${sortedIndex}</span> из ${words.length}</b>
 						<br><span class="sold-keys">${soldWords}</span>${notSoldWords.trim().slice(0, -1)}
