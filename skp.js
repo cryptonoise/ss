@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name                SKP
 // @description         Shutterstock Keywords Pizding
-// @version             3.1
+// @version             3.2
 // @author              Freem
 // @icon                https://raw.githubusercontent.com/cryptonoise/ss/master/skpicon.png
 // @match               https://www.shutterstock.com/*image-photo*
@@ -17,19 +17,18 @@
   
 	$(".jss198").hide()
   $(".jss7").hide()
+
   
 	let style = document.createElement('style');
 	document.getElementsByTagName('head')[0].appendChild(style);
 	style.innerHTML = ` 
       .skp {
-        background: rgba(255, 255, 255, 0.70);
+        background: rgba(255, 255, 255);
         line-height: 150%;
-        position: relative;
+        position: fixed;
+				z-index:99999;
         font-size: 14pt;
-				padding: 15px 15px 2px 15px;
-				margin-top: 24px;
-				margin-bottom: 24px;
-				border-radius: 8px;
+				padding: 10px 10px 2px 10px;
 				border-color: silver;
 				border-width: 1px;
 				border-style: solid;
@@ -37,9 +36,8 @@
       .sold-keys {
         color: rgb(10, 171, 128);
                 }
-
 			.skp-logo {
-    		font-size: 10px;
+    		font-size: 9px;
   			text-align: right;
 				color: #36363F;
 				text-shadow: 0px 4px 3px rgba(0,0,0,0.4),
@@ -72,7 +70,7 @@
 		setTimeout(() => {
 			let newKeywordsAll = document.createElement("div");
 			newKeywordsAll.className = 'skp';
-			document.querySelector('.jss125').after(newKeywordsAll);
+			document.querySelector('.jss1').after(newKeywordsAll);
 			newKeywordsAll.innerHTML = `
 						<b>🗝 Продаваемых ключей <span class="sold-keys">${sortedIndex}</span> из ${words.length}</b>
 						<br><span class="sold-keys">${soldWords}</span>${notSoldWords.trim().slice(0, -1)}
