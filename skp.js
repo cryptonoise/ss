@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name                SKP
 // @description         Shutterstock Keywords Pizding
-// @version             3.2
+// @version             3.3
 // @author              Freem
 // @icon                https://raw.githubusercontent.com/cryptonoise/ss/master/skpicon.png
 // @match               https://www.shutterstock.com/*image-photo*
@@ -28,7 +28,9 @@
         position: fixed;
 				z-index:99999;
         font-size: 14pt;
-				padding: 10px 10px 2px 10px;
+				width: 100%;
+				bottom:0;
+				padding: 10px 70px 2px 70px;
 				border-color: silver;
 				border-width: 1px;
 				border-style: solid;
