@@ -16,7 +16,7 @@
 	'use strict';
   
 	$(".jss198").hide()
-  $(".jss7").hide()
+  $(".jss3").hide()
 
   
 	let style = document.createElement('style');
