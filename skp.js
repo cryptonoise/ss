@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name                SKP
 // @description         Shutterstock Keywords Pizding
-// @version             3.4
+// @version             3.5
 // @author              Freem
 // @icon                https://raw.githubusercontent.com/cryptonoise/ss/master/skpicon.png
 // @match               https://www.shutterstock.com/*image-photo*
@@ -14,8 +14,7 @@
 // ==/UserScript==
 (function() {
 	'use strict';
-  
-	$(".jss198").hide()
+
   $(".jss3").hide()
 
   
@@ -76,7 +75,7 @@
 			newKeywordsAll.innerHTML = `
 						<b><center>🗝 Продаваемых ключей <span class="sold-keys">${sortedIndex}</span> из ${words.length}</b></center>
 						<span class="sold-keys">${soldWords}</span>${notSoldWords.trim().slice(0, -1)}
-						<div class="skp-logo"><marquee>SHUTTERSTOCK KEYWORDS PiZDING</marquee></div>
+						<div class="skp-logo">SHUTTERSTOCK KEYWORDS PiZDING</div>
 			`;
 		}, 1000);
 	}
