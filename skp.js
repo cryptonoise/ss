@@ -6,12 +6,13 @@
 // @icon                https://raw.githubusercontent.com/cryptonoise/ss/master/skpicon.png
 // @match               https://www.shutterstock.com/*image-photo*
 // @match               https://www.shutterstock.com/*image-vector*
-// @match               https://www.shutterstock.com/*image-illustration*
+// @exclude             https://www.shutterstock.com/*image-illustration*
 // @exclude             https://www.shutterstock.com/video*
 // @exclude             https://www.shutterstock.com/search*
 // @require             http://code.jquery.com/jquery-latest.min.js
 // @grant               none
 // ==/UserScript==
+
 (function() {
 	'use strict';
 
@@ -95,7 +96,5 @@
 	}
 
 	document.querySelector('head title').addEventListener('DOMSubtreeModified', refresh);
-    
- 
 	
 })();
