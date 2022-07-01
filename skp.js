@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name                SKP
 // @description         Shutterstock Keywords Pizding
-// @version             3.5
+// @version             3.6
 // @author              Freem
 // @icon                https://raw.githubusercontent.com/cryptonoise/ss/master/skpicon.png
 // @match               https://www.shutterstock.com/*image-photo*
 // @match               https://www.shutterstock.com/*image-vector*
-// @exclude             https://www.shutterstock.com/*image-illustration*
-// @exclude             https://www.shutterstock.com/video*
+// @match               https://www.shutterstock.com/*image-illustration*
+// @match               https://www.shutterstock.com/*video*
 // @exclude             https://www.shutterstock.com/search*
 // @require             http://code.jquery.com/jquery-latest.min.js
 // @grant               none
@@ -16,12 +16,9 @@
 (function() {
 	'use strict';
 
-  $(".jss3").hide()
-
-  
 	let style = document.createElement('style');
 	document.getElementsByTagName('head')[0].appendChild(style);
-	style.innerHTML = ` 
+	style.innerHTML = `
       .skp {
         background: rgba(255, 255, 255);
         line-height: 150%;
@@ -46,6 +43,9 @@
                      0px 8px 13px rgba(0,0,0,0.1),
                      0px 18px 23px rgba(0,0,0,0.1);
 								}
+      .jss3 		{
+				display: None !important;
+      					}
     	`;
 	let json = document.querySelector('#__NEXT_DATA__').innerHTML;
 	let ssjson = JSON.parse(json);
@@ -96,5 +96,6 @@
 	}
 
 	document.querySelector('head title').addEventListener('DOMSubtreeModified', refresh);
-	
+
+
 })();
