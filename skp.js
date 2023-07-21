@@ -3,7 +3,7 @@
 // @description         Shutterstock Keywords Pizding
 // @version             3.8
 // @author              Freem
-// @icon                https://raw.githubusercontent.com/cryptonoise/ss/master/skpicon.png
+// @icon                https://github.com/cryptonoise/ss/blob/master/SKP.png?raw=true
 // @match               https://www.shutterstock.com/*image-photo*
 // @match               https://www.shutterstock.com/*image-vector*
 // @match               https://www.shutterstock.com/*image-illustration*
