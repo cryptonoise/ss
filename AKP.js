@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           AKP
 // @description    Adobe Keywords Pizding
-// @version        0.2
+// @version        0.4
 // @author         Freem
 // @match          https://stock.adobe.com/*
 // @icon           https://github.com/cryptonoise/ss/blob/master/AKP.png?raw=true
@@ -23,6 +23,21 @@
         .blink {
             animation: blink 1s linear;
             animation-iteration-count: 1;
+        }
+
+        .highlight {
+            color: green !important;
+            background-color: transparent !important;
+        }
+
+        .copy-button:hover {
+            background-color: #eee;
+            box-shadow: 0px 0px 3px #888;
+        }
+
+        .copy-button:active {
+            background-color: #ddd;
+            box-shadow: none;
         }
     `;
     document.head.appendChild(css);
@@ -51,8 +66,15 @@
         // Add click event to each keyword
         fixedKeywordsArea.querySelectorAll('.keyword').forEach(keywordElement => {
             keywordElement.onclick = function() {
-                this.classList.add('blink');
-                setTimeout(() => this.classList.remove('blink'), 1000);
+                if (this.classList.contains('highlight')) {
+                    this.classList.remove('highlight');
+                } else {
+                    this.classList.add('blink');
+                    setTimeout(() => {
+                        this.classList.remove('blink');
+                        this.classList.add('highlight');
+                    }, 1000);
+                }
             };
         });
 
@@ -87,6 +109,46 @@
     `;
     adobeKeywordsPizdingText.innerHTML = 'ADOBE KEYWORDS PiZDING';
     fixedKeywordsContainer.appendChild(adobeKeywordsPizdingText);
+
+    // Add "Copy All" button
+    let copyAllButton = document.createElement('button');
+    copyAllButton.innerHTML = 'Скопировать все';
+    copyAllButton.style.cssText = `
+        margin-left: 10px;
+        font-size: 16px;
+        padding: 2px 5px;
+        border: none;
+        background-color: #eee;
+        cursor: pointer;
+    `;
+    copyAllButton.classList.add('copy-button');
+    copyAllButton.onclick = function() {
+        let keywords = document.querySelectorAll('.fixed-keywords .keyword');
+        let keywordsArray = Array.from(keywords).map(keyword => keyword.textContent.trim());
+        let keywordsString = keywordsArray.join(', ');
+        navigator.clipboard.writeText(keywordsString);
+    };
+    fixedKeywordsContainer.appendChild(copyAllButton);
+
+    // Add "Copy Selected" button
+    let copySelectedButton = document.createElement('button');
+    copySelectedButton.innerHTML = 'Скопировать выделенные';
+    copySelectedButton.style.cssText = `
+        margin-left:10px;
+        font-size: 16px;
+        padding: 2px 5px;
+        border: none;
+        background-color: #eee;
+        cursor: pointer;
+    `;
+    copySelectedButton.classList.add('copy-button');
+    copySelectedButton.onclick = function() {
+        let selectedKeywords = document.querySelectorAll('.fixed-keywords .highlight');
+        let selectedKeywordsArray = Array.from(selectedKeywords).map(keyword => keyword.textContent.trim());
+        let selectedKeywordsString = selectedKeywordsArray.join(', ');
+        navigator.clipboard.writeText(selectedKeywordsString);
+    };
+    fixedKeywordsContainer.appendChild(copySelectedButton);
 
     // Observer to react on changes.
     let observer = new MutationObserver(function(mutations) {
