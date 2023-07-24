@@ -82,7 +82,7 @@
         });
 
         // Display keyword count.
-        document.querySelector('.fixed-keywords-area .fixed-keyword-count').innerHTML = '<b>🗝 Всего ключей:</b> ' + keywords.length;
+        document.querySelector('.fixed-keywords-area .fixed-keyword-count').innerHTML = '<b>🗝 Total keywords:</b> ' + keywords.length;
     }
 
     // Create a fixed area at the bottom of the page for keywords.
@@ -115,7 +115,7 @@
 
     // Add "Copy All" button
     let copyAllButton = document.createElement('button');
-    copyAllButton.innerHTML = 'Скопировать все';
+    copyAllButton.innerHTML = 'Сopy all';
     copyAllButton.style.cssText = `
         margin-left: 10px;
         font-size: 16px;
@@ -135,7 +135,7 @@
 
     // Add "Copy Selected" button
     let copySelectedButton = document.createElement('button');
-    copySelectedButton.innerHTML = 'Скопировать выделенные';
+    copySelectedButton.innerHTML = 'Copy selected';
     copySelectedButton.style.cssText = `
         margin-left:10px;
         font-size: 16px;
@@ -168,3 +168,4 @@
     // Call the function immediately to apply the effects to the current keywords on the page
     changeKeywordsDisplay();
 })();
+         
