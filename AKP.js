@@ -1,35 +1,66 @@
 // ==UserScript==
-// @name       AKP
-// @description Adobe Keywords Pizding
-// @namespace  http://tampermonkey.net/
-// @version     0.1
-// @author      Freem
-// @match      https://stock.adobe.com/*
-// @icon       https://github.com/cryptonoise/ss/blob/master/AKP.png?raw=true
+// @name           AKP
+// @description    Adobe Keywords Pizding
+// @version        0.2
+// @author         Freem
+// @match          https://stock.adobe.com/*
+// @icon           https://github.com/cryptonoise/ss/blob/master/AKP.png?raw=true
 // ==/UserScript==
 
 (function() {
     'use strict';
 
+    /* Animation */
+    const css = document.createElement('style');
+    css.type = 'text/css';
+    css.innerHTML = `
+        @keyframes blink {
+            0%   { opacity: 1; }
+            50%  { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        .blink {
+            animation: blink 1s linear;
+            animation-iteration-count: 1;
+        }
+    `;
+    document.head.appendChild(css);
+
     function changeKeywordsDisplay() {
         let tmpKeywordsNode = document.querySelector('#details-keywords-list-tmp');
         if (!tmpKeywordsNode) return;
 
-        let keywordsNode = document.querySelector('.details-keywords-list-original');
-
         let keywords = Array.from(tmpKeywordsNode.querySelectorAll('a')).map(a => a.textContent.trim());
 
-        // Show keywords in original keywordsNode.
-        keywordsNode.innerHTML = keywords.join(', ');
+        // Create a keywords string with the span tags
+        let keywordsString = '';
+
+        keywords.forEach((keyword, index) => {
+            keywordsString += `<span class="keyword">${keyword}</span>`;
+            // Add comma after keyword unless it is the last one
+            if (index !== keywords.length - 1) {
+                keywordsString += ', ';
+            }
+        });
 
         // Display the keywords in the fixed area.
-        document.querySelector('.fixed-keywords-area .fixed-keywords').innerHTML = keywords.join(', ');
+        const fixedKeywordsArea = document.querySelector('.fixed-keywords-area .fixed-keywords');
+        fixedKeywordsArea.innerHTML = keywordsString;
+
+        // Add click event to each keyword
+        fixedKeywordsArea.querySelectorAll('.keyword').forEach(keywordElement => {
+            keywordElement.onclick = function() {
+                this.classList.add('blink');
+                setTimeout(() => this.classList.remove('blink'), 1000);
+            };
+        });
 
         // Display keyword count.
         document.querySelector('.fixed-keywords-area .fixed-keyword-count').innerHTML = '<b>🗝 Всего ключей:</b> ' + keywords.length;
     }
 
-    // Create a fixed area at the bottom of the page for the keywords.
+    // Create a fixed area at the bottom of the page for keywords.
     let fixedKeywordsContainer = document.createElement('div');
     fixedKeywordsContainer.style.cssText = `
         position: fixed;
@@ -40,10 +71,10 @@
         text-align: center;
         border-top: 1px solid silver;
         font-size: 18px;
-        box-sizing: border-box; // Ensures padding is included in width
+        box-sizing: border-box;
     `;
     fixedKeywordsContainer.className = 'fixed-keywords-area';
-    fixedKeywordsContainer.innerHTML = '<div class="fixed-keyword-count"></div><div class="fixed-keywords" style="word-wrap: break-word; padding: 0 10px;"></div>'; // added word-wrap and padding rights and left
+    fixedKeywordsContainer.innerHTML = '<div class="fixed-keyword-count"></div><div class="fixed-keywords" style="word-wrap: break-word; padding: 0 10px;"></div>';
     document.body.appendChild(fixedKeywordsContainer);
 
     // Create a text element in the bottom right corner of the fixed area.
@@ -68,4 +99,7 @@
 
     // Start observing the body with the configured parameters.
     observer.observe(document.body, { childList: true, subtree: true });
+
+    // Call the function immediately to apply the effects to the current keywords on the page
+    changeKeywordsDisplay();
 })();
