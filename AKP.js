@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           AKP
-// @description    Adobe Keywords Pizding
+// @description    Adobe Keywords Pizding (Исправление ключевых слов Adobe)
 // @version        0.5
 // @author         Freem
 // @match          https://stock.adobe.com/images/*
@@ -14,15 +14,29 @@
 (function() {
     'use strict';
 
-    // Проверяем, содержит ли текущий URL "/ru/"
-    if (window.location.href.includes("/ru/")) {
-        // Заменяем "/ru/" на "/in/"
-        const newUrl = window.location.href.replace("/ru/", "/in/");
-        // Перенаправляем пользователя на новый URL
-        window.location.href = newUrl;
+    // Убираем рекламу. Находим элемент с классом "hide-on-small-only"
+    let hideElement = document.querySelector('.hide-on-small-only');
+    // Проверяем, существует ли элемент
+    if (hideElement) {
+    // Скрываем элемент
+    hideElement.style.display = 'none';
     }
 
-    /* Animation */
+    // Получаем текущий URL
+    const currentUrl = window.location.href;
+
+    // Список идентификаторов региона, которые нужно исправить
+    const pathsToCheck = ["/ru/", "/ua/", "/de/", "/dk/", "/it/", "/pe/", "/vn/", "/my/", "/th/", "/jp/"];
+
+    // Проверяем, содержит ли текущий URL один из указанных идентификаторов региона
+    if (pathsToCheck.some(path => currentUrl.includes(path))) {
+    // Заменяем регион на "/in/" в URL
+        const newUrl = pathsToCheck.reduce((url, path) => url.replace(path, "/in/"), currentUrl);
+    // Перенаправляем пользователя на новый URL
+    window.location.href = newUrl;
+}
+
+    /* Анимация */
     const css = document.createElement('style');
     css.type = 'text/css';
     css.innerHTML = `
@@ -60,22 +74,22 @@
 
         let keywords = Array.from(tmpKeywordsNode.querySelectorAll('a')).map(a => a.textContent.trim());
 
-        // Create a keywords string with the span tags
+        // Создаем строку с ключевыми словами с тегами span
         let keywordsString = '';
 
         keywords.forEach((keyword, index) => {
             keywordsString += `<span class="keyword">${keyword}</span>`;
-            // Add comma after keyword unless it is the last one
+            // Добавляем запятую после ключевого слова, если оно не последнее
             if (index !== keywords.length - 1) {
                 keywordsString += ', ';
             }
         });
 
-        // Display the keywords in the fixed area.
+        // Отображаем ключевые слова в фиксированной области.
         const fixedKeywordsArea = document.querySelector('.fixed-keywords-area .fixed-keywords');
         fixedKeywordsArea.innerHTML = keywordsString;
 
-        // Add click event to each keyword
+        // Добавляем обработчик клика для каждого ключевого слова
         fixedKeywordsArea.querySelectorAll('.keyword').forEach(keywordElement => {
             keywordElement.onclick = function() {
                 if (this.classList.contains('highlight')) {
@@ -90,11 +104,11 @@
             };
         });
 
-        // Display keyword count.
-        document.querySelector('.fixed-keywords-area .fixed-keyword-count').innerHTML = '<b>🗝 Total keywords:</b> ' + keywords.length;
+        // Отображаем количество ключевых слов.
+        document.querySelector('.fixed-keywords-area .fixed-keyword-count').innerHTML = '<b>🗝 Всего ключевых слов:</b> ' + keywords.length;
     }
 
-    // Create a fixed area at the bottom of the page for keywords.
+    // Создаем фиксированную область внизу страницы для ключевых слов.
     let fixedKeywordsContainer = document.createElement('div');
     fixedKeywordsContainer.style.cssText = `
         position: fixed;
@@ -111,7 +125,7 @@
     fixedKeywordsContainer.innerHTML = '<div class="fixed-keyword-count"></div><div class="fixed-keywords" style="word-wrap: break-word; padding: 0 10px;"></div>';
     document.body.appendChild(fixedKeywordsContainer);
 
-    // Create a text element in the bottom right corner of the fixed area.
+    // Создаем текстовый элемент в правом нижнем углу фиксированной области.
     let adobeKeywordsPizdingText = document.createElement('div');
     adobeKeywordsPizdingText.style.cssText = `
         position: absolute;
@@ -122,9 +136,9 @@
     adobeKeywordsPizdingText.innerHTML = 'ADOBE KEYWORDS PiZDING';
     fixedKeywordsContainer.appendChild(adobeKeywordsPizdingText);
 
-    // Add "Copy All" button
+    // Добавляем кнопку "Копировать все"
     let copyAllButton = document.createElement('button');
-    copyAllButton.innerHTML = 'Сopy all';
+    copyAllButton.innerHTML = 'Копировать все';
     copyAllButton.style.cssText = `
         margin-left: 10px;
         font-size: 16px;
@@ -142,9 +156,9 @@
     };
     fixedKeywordsContainer.appendChild(copyAllButton);
 
-    // Add "Copy Selected" button
+    // Добавляем кнопку "Копировать выбранные"
     let copySelectedButton = document.createElement('button');
-    copySelectedButton.innerHTML = 'Copy selected';
+    copySelectedButton.innerHTML = 'Копировать выбранные';
     copySelectedButton.style.cssText = `
         margin-left:10px;
         font-size: 16px;
@@ -162,7 +176,7 @@
     };
     fixedKeywordsContainer.appendChild(copySelectedButton);
 
-    // Observer to react on changes.
+    // Наблюдатель для реагирования на изменения.
     let observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
             if (mutation.target.closest('#details-keywords-list-tmp')) {
@@ -171,9 +185,9 @@
         });
     });
 
-    // Start observing the body with the configured parameters.
+    // Начинаем наблюдение за телом страницы с заданными параметрами.
     observer.observe(document.body, { childList: true, subtree: true });
 
-    // Call the function immediately to apply the effects to the current keywords on the page
+    // Вызываем функцию немедленно, чтобы применить эффекты к текущим ключевым словам на странице
     changeKeywordsDisplay();
 })();
