@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name           AKP
 // @description    Adobe Keywords Pizding
-// @version        0.4
+// @version        0.5
 // @author         Freem
 // @match          https://stock.adobe.com/images/*
+// @match          https://stock.adobe.com/*/images/*
 // @match          https://stock.adobe.com/stock-photo/*
 // @match          https://stock.adobe.com/video/*
 // @match          https://stock.adobe.com/templates/*
@@ -12,6 +13,14 @@
 
 (function() {
     'use strict';
+
+    // Проверяем, содержит ли текущий URL "/ru/"
+    if (window.location.href.includes("/ru/")) {
+        // Заменяем "/ru/" на "/in/"
+        const newUrl = window.location.href.replace("/ru/", "/in/");
+        // Перенаправляем пользователя на новый URL
+        window.location.href = newUrl;
+    }
 
     /* Animation */
     const css = document.createElement('style');
@@ -168,4 +177,3 @@
     // Call the function immediately to apply the effects to the current keywords on the page
     changeKeywordsDisplay();
 })();
-         
