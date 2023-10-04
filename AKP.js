@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           AKP
-// @description    Adobe Keywords Pizding (Исправление ключевых слов Adobe)
-// @version        0.5
+// @description    Adobe Keywords Pizding
+// @version        0.6
 // @author         Freem
 // @match          https://stock.adobe.com/images/*
 // @match          https://stock.adobe.com/*/images/*
@@ -18,8 +18,8 @@
     let hideElement = document.querySelector('.hide-on-small-only');
     // Проверяем, существует ли элемент
     if (hideElement) {
-    // Скрываем элемент
-    hideElement.style.display = 'none';
+        // Скрываем элемент
+        hideElement.style.display = 'none';
     }
 
     // Получаем текущий URL
@@ -30,11 +30,11 @@
 
     // Проверяем, содержит ли текущий URL один из указанных идентификаторов региона
     if (pathsToCheck.some(path => currentUrl.includes(path))) {
-    // Заменяем регион на "/in/" в URL
+        // Заменяем регион на "/in/" в URL
         const newUrl = pathsToCheck.reduce((url, path) => url.replace(path, "/in/"), currentUrl);
-    // Перенаправляем пользователя на новый URL
-    window.location.href = newUrl;
-}
+        // Перенаправляем пользователя на новый URL
+        window.location.href = newUrl;
+    }
 
     /* Анимация */
     const css = document.createElement('style');
@@ -108,22 +108,31 @@
         document.querySelector('.fixed-keywords-area .fixed-keyword-count').innerHTML = '<b>🗝 Всего ключевых слов:</b> ' + keywords.length;
     }
 
-    // Создаем фиксированную область внизу страницы для ключевых слов.
-    let fixedKeywordsContainer = document.createElement('div');
-    fixedKeywordsContainer.style.cssText = `
-        position: fixed;
-        width: 100%;
-        bottom: 0;
-        background: #fff;
-        padding: 20px 20px 20px 20px;
-        text-align: center;
-        border-top: 1px solid silver;
-        font-size: 18px;
-        box-sizing: border-box;
+    // Создаем обертку для контента, чтобы был виден футер при прокрутке страницы
+    let contentWrapper = document.createElement('div');
+    contentWrapper.style.cssText = `
+        position: relative;
+        min-height: 150px;
     `;
-    fixedKeywordsContainer.className = 'fixed-keywords-area';
-    fixedKeywordsContainer.innerHTML = '<div class="fixed-keyword-count"></div><div class="fixed-keywords" style="word-wrap: break-word; padding: 0 10px;"></div>';
-    document.body.appendChild(fixedKeywordsContainer);
+    document.body.appendChild(contentWrapper);
+
+	// Создаем фиксированную область внизу страницы для ключевых слов.
+	let fixedKeywordsContainer = document.createElement('div');
+	fixedKeywordsContainer.style.cssText = `
+	    position: fixed;
+	    width: 100%;
+	    bottom: 0;
+	    background: #fff;
+	    padding: 20px 20px 20px 20px;
+	    text-align: center;
+	    border-top: 1px solid silver;
+	    font-size: 18px;
+	    box-sizing: border-box;
+	    z-index: 999;
+	`;
+	fixedKeywordsContainer.className = 'fixed-keywords-area';
+	fixedKeywordsContainer.innerHTML = '<div class="fixed-keyword-count"></div><div class="fixed-keywords" style="word-wrap: break-word; padding: 0 10px;"></div>';
+	contentWrapper.appendChild(fixedKeywordsContainer); //
 
     // Создаем текстовый элемент в правом нижнем углу фиксированной области.
     let adobeKeywordsPizdingText = document.createElement('div');
