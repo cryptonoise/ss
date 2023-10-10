@@ -105,7 +105,7 @@
         });
 
         // Отображаем количество ключевых слов.
-        document.querySelector('.fixed-keywords-area .fixed-keyword-count').innerHTML = '<b>🗝 Всего ключевых слов:</b> ' + keywords.length;
+        document.querySelector('.fixed-keywords-area .fixed-keyword-count').innerHTML = '<b>🗝 Total keywords:</b> ' + keywords.length;
     }
 
     // Создаем обертку для контента, чтобы был виден футер при прокрутке страницы
@@ -147,7 +147,7 @@
 
     // Добавляем кнопку "Копировать все"
     let copyAllButton = document.createElement('button');
-    copyAllButton.innerHTML = 'Копировать все';
+    copyAllButton.innerHTML = 'Copy all';
     copyAllButton.style.cssText = `
         margin-left: 10px;
         font-size: 16px;
@@ -167,7 +167,7 @@
 
     // Добавляем кнопку "Копировать выбранные"
     let copySelectedButton = document.createElement('button');
-    copySelectedButton.innerHTML = 'Копировать выбранные';
+    copySelectedButton.innerHTML = 'Copy selected';
     copySelectedButton.style.cssText = `
         margin-left:10px;
         font-size: 16px;
