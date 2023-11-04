@@ -4,9 +4,11 @@
 // @version        0.6
 // @author         Freem
 // @match          https://stock.adobe.com/images/*
-// @match          https://stock.adobe.com/*/images/*
-// @match          https://stock.adobe.com/stock-photo/*
 // @match          https://stock.adobe.com/video/*
+// @match          https://stock.adobe.com/*/images/*
+// @match          https://stock.adobe.com/*/video/*
+// @match          https://stock.adobe.com/stock-photo/*
+// @match          https://stock.adobe.com/*/stock-photo/*
 // @match          https://stock.adobe.com/templates/*
 // @icon           https://github.com/cryptonoise/ss/blob/master/AKP.png?raw=true
 // ==/UserScript==
