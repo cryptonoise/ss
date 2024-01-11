@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name                SKP
 // @description         Shutterstock Keywords Pizding
-// @version             4.1
+// @version             4.2
 // @author              Freem
 // @icon                https://github.com/cryptonoise/ss/blob/master/SKP.png?raw=true
 // @match               https://www.shutterstock.com/*image-photo*
@@ -81,6 +81,7 @@
                 cursor: pointer;
                 border-radius: 5px;
                 border-bottom: 4px solid #d9d9d9;
+                margin-right: 10px;
             }
 
             .copy-button:hover {
