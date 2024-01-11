@@ -83,16 +83,13 @@
                 border-bottom: 4px solid #d9d9d9;
                 margin-right: 10px;
             }
-
             .copy-button:hover {
                 box-shadow: 0px 15px 25px -5px SlateGrey;
                 transform: scale(1.03);
             }
-
             .copy-button:active {
                 box-shadow: 0px 4px 8px SlateGrey;
                 transform: scale(0.98);
-            }
             }
             @keyframes blink {
                 0% { opacity: 1; }
@@ -133,7 +130,7 @@
             keysHTML = keywords.map(keyword => `<span>${keyword}</span>`).join(', ');
 
             skpElement.innerHTML = `
-                <b><center>🗝 Total keywords: ${totalKeywords} | Selected: ${selectedKeywords} </center></b>
+                <b><center>🗝 Total keywords: ${totalKeywords} | Selected: <span class="selected-count">${selectedKeywords}</span> </center></b>
                 <div class="keys-container">
                     <div class="keys">${keysHTML}</div>
                 </div>
@@ -175,7 +172,7 @@
             // Обновление счетчика выбранных ключевых слов
             function updateSelectedCount() {
                 const selectedKeywordsCount = skpElement.querySelectorAll('.skp .keys span.highlight').length;
-                skpElement.querySelector('.skp b center').innerHTML = `🗝 Всего ключей: ${totalKeywords} | Выбрано: ${selectedKeywordsCount}`;
+                skpElement.querySelector('.selected-count').innerText = selectedKeywordsCount;
             }
 
             // Инициализация счетчика при загрузке страницы
