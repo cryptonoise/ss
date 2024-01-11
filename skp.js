@@ -40,7 +40,7 @@
                 font-size: 14pt;
                 width: 100%;
                 bottom: 0;
-                padding: 10px 70px 2px 70px;
+                padding: 20px 20px 20px 20px;
                 border-color: silver;
                 border-width: 1px;
                 border-style: solid;
@@ -69,13 +69,29 @@
                 background-color: transparent !important;
                 transition: color 0.5s;
             }
-            .copy-button:hover {
-                background-color: #eee;
-                box-shadow: 0px 0px 3px #888;
+            .copy-button {
+                background-color: #fff;
+                border: 0;
+                outline: 0;
+                padding: 5px 10px;
+                font-size: 15px;
+                font-family: monospace;
+                box-shadow: 0px 5px 10px black;
+                transition: all 0.3s;
+                cursor: pointer;
+                border-radius: 5px;
+                border-bottom: 4px solid #d9d9d9;
             }
+
+            .copy-button:hover {
+                box-shadow: 0px 15px 25px -5px SlateGrey;
+                transform: scale(1.03);
+            }
+
             .copy-button:active {
-                background-color: #ddd;
-                box-shadow: none;
+                box-shadow: 0px 4px 8px SlateGrey;
+                transform: scale(0.98);
+            }
             }
             @keyframes blink {
                 0% { opacity: 1; }
