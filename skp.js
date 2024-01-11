@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name                SKP
 // @description         Shutterstock Keywords Pizding
-// @version             4.0
+// @version             4.1
 // @author              Freem
 // @icon                https://github.com/cryptonoise/ss/blob/master/SKP.png?raw=true
 // @match               https://www.shutterstock.com/*image-photo*
@@ -44,6 +44,16 @@
                 border-color: silver;
                 border-width: 1px;
                 border-style: solid;
+                text-align: center;
+            }
+            .keys-container {
+                max-width: 90%;
+                margin: auto;
+            }
+            .keys {
+                display: inline-block;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
             .keys span {
                 cursor: pointer;
@@ -100,11 +110,16 @@
         // Дублируем ключевые слова в закрепленную область
         function updateKeywords() {
             const keywords = extractKeywords();
+            const totalKeywords = keywords.length;
+            const selectedKeywords = skpElement.querySelectorAll('.skp .keys span.highlight').length;
+
             keysHTML = keywords.map(keyword => `<span>${keyword}</span>`).join(', ');
 
             skpElement.innerHTML = `
-                <b><center>🗝 Всего ключей: ${keywords.length}</center></b>
-                <div class="keys">${keysHTML}</div>
+                <b><center>🗝 Всего ключей: ${totalKeywords} | Выбрано: ${selectedKeywords} </center></b>
+                <div class="keys-container">
+                    <div class="keys">${keysHTML}</div>
+                </div>
                 <div class="skp-buttons" style="text-align: center;">
                     <button class="copy-button" id="copy-all">Copy all</button>
                     <button class="copy-button" id="copy-selected">Copy selected</button>
@@ -132,11 +147,22 @@
 
             // Добавление обработчиков событий для выделения ключевых слов
             let keywordSpans = skpElement.querySelectorAll('.skp .keys span');
+
             keywordSpans.forEach(keywordSpan => {
                 keywordSpan.addEventListener('click', function () {
                     keywordSpan.classList.toggle('highlight');
+                    updateSelectedCount();
                 });
             });
+
+            // Обновление счетчика выбранных ключевых слов
+            function updateSelectedCount() {
+                const selectedKeywordsCount = skpElement.querySelectorAll('.skp .keys span.highlight').length;
+                skpElement.querySelector('.skp b center').innerHTML = `🗝 Всего ключей: ${totalKeywords} | Выбрано: ${selectedKeywordsCount}`;
+            }
+
+            // Инициализация счетчика при загрузке страницы
+            updateSelectedCount();
         }
 
         // Обновление ключей при загрузке страницы
