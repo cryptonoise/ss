@@ -4,7 +4,10 @@
 // @version             4.0
 // @author              Freem
 // @icon                https://github.com/cryptonoise/ss/blob/master/SKP.png?raw=true
-// @match               https://www.shutterstock.com/*
+// @match               https://www.shutterstock.com/*image-photo*
+// @match               https://www.shutterstock.com/*image-vector*
+// @match               https://www.shutterstock.com/*image-illustration*
+// @match               https://www.shutterstock.com/*video*
 // @exclude             https://www.shutterstock.com/search*
 // @grant               none
 // ==/UserScript==
@@ -12,7 +15,7 @@
 (function () {
     'use strict';
 
-    // Функция для ожидания появления элемента на странице
+    // Ждем появления элемента с ключевыми словами
     function waitForElement(selector, callback) {
         const interval = setInterval(function () {
             const element = document.querySelector(selector);
@@ -23,9 +26,9 @@
         }, 500);
     }
 
-    // Ожидание появления элемента с ключевыми словами
     waitForElement('[data-automation="KeywordList"]', function () {
-        // Добавление стилей для отображения ключей
+
+        // Стили оформления элементов
         let style = document.createElement('style');
         document.getElementsByTagName('head')[0].appendChild(style);
         style.innerHTML = `
@@ -64,13 +67,11 @@
                 background-color: #ddd;
                 box-shadow: none;
             }
-
             @keyframes blink {
                 0% { opacity: 1; }
                 50% { opacity: 0; }
                 100% { opacity: 1; }
             }
-
             .skp-logo {
                 position: absolute;
                 bottom: 0;
@@ -83,11 +84,6 @@
             }
         `;
 
-        let keysHTML = '';
-        let skpElement = document.createElement('div');
-        skpElement.className = 'skp';
-        document.body.appendChild(skpElement);
-
         // Извлечение ключевых слов из JSON
         function extractKeywords() {
             let json = document.querySelector('#__NEXT_DATA__').innerHTML;
@@ -95,7 +91,13 @@
             return ssjson.props.pageProps.asset.keywords;
         }
 
-        // Обновление отображаемых ключевых слов
+        // Создаем закрепленную область внизу страницы
+        let keysHTML = '';
+        let skpElement = document.createElement('div');
+        skpElement.className = 'skp';
+        document.body.appendChild(skpElement);
+
+        // Дублируем ключевые слова в закрепленную область
         function updateKeywords() {
             const keywords = extractKeywords();
             keysHTML = keywords.map(keyword => `<span>${keyword}</span>`).join(', ');
