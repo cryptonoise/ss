@@ -116,7 +116,7 @@
             keysHTML = keywords.map(keyword => `<span>${keyword}</span>`).join(', ');
 
             skpElement.innerHTML = `
-                <b><center>🗝 Всего ключей: ${totalKeywords} | Выбрано: ${selectedKeywords} </center></b>
+                <b><center>🗝 Total keywords: ${totalKeywords} | Selected: ${selectedKeywords} </center></b>
                 <div class="keys-container">
                     <div class="keys">${keysHTML}</div>
                 </div>
