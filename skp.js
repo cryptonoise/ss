@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name                SKP
 // @description         Shutterstock Keywords Pizding
-// @version             4.2
+// @version             4.3
 // @author              Freem
 // @icon                https://github.com/cryptonoise/ss/blob/master/SKP.png?raw=true
 // @match               https://www.shutterstock.com/*image-photo*
@@ -59,6 +59,18 @@
                 cursor: pointer;
                 transition: color 0.5s;
                 display: inline-block;
+            }
+
+            .keys span.shake {
+                animation: shake 0.5s ease-in-out infinite;
+            }
+
+            @keyframes shake {
+                0% { transform: translate(0, 0); }
+                25% { transform: translate(-1px, -1px); }
+                50% { transform: translate(1px, 1px); }
+                75% { transform: translate(-1px, 1px); }
+                100% { transform: translate(1px, -1px); }
             }
             .blink {
                 animation: blink 1s linear;
@@ -161,10 +173,10 @@
 
             // Добавление обработчиков событий для выделения ключевых слов
             let keywordSpans = skpElement.querySelectorAll('.skp .keys span');
-
             keywordSpans.forEach(keywordSpan => {
                 keywordSpan.addEventListener('click', function () {
                     keywordSpan.classList.toggle('highlight');
+                    keywordSpan.classList.toggle('shake', keywordSpan.classList.contains('highlight'));
                     updateSelectedCount();
                 });
             });
