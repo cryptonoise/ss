@@ -6,6 +6,7 @@
 // @grant        none
 // ==/UserScript==
 
+
 (function() {
     'use strict';
 
@@ -24,7 +25,7 @@
                     if (element && element.parentElement) {
                         element.remove(); // Удаляем элемент только если он существует и имеет родителя
                     }
-                }, 500); // Задержка для ожидания завершения рендера React
+                }, 1000); // Задержка для ожидания завершения рендера React
             } catch (e) {
                 console.warn('Failed to remove element:', e.message);
             }
@@ -42,7 +43,7 @@
                     if (blockToMove && parentContainer && parentContainer.contains(blockToMove)) {
                         parentContainer.appendChild(blockToMove); // Перемещаем блок только если он является дочерним элементом контейнера
                     }
-                }, 500); // Задержка для ожидания завершения рендера React
+                }, 1000); // Задержка для ожидания завершения рендера React
             } catch (e) {
                 console.warn('Failed to move block:', e.message);
             }
@@ -50,15 +51,19 @@
     }
 
     // Инициализация MutationObserver для отслеживания изменений в DOM
-    const observer = new MutationObserver(() => {
-        // Безопасное удаление всех указанных элементов
-        safeRemoveElementByXPath('/html/body/div[1]/div[2]/div/div/div[2]/div[1]/form/div[2]/div[2]/div[2]/div[1]/div/div[4]');
-        safeRemoveElementByXPath('/html/body/div[1]/div[2]/div/div/div[2]/div[1]/form/div[2]/div[2]/div[2]/div[1]/div/div[5]');
-        safeRemoveElementByXPath('/html/body/div[1]/div[2]/div/div/div[2]/div[1]/form/div[2]/div[2]/div[2]/div[1]/div/div[2]/hr[2]');
-        safeRemoveElementByXPath('/html/body/div[1]/div[2]/div/div/div[2]/div[1]/form/div[2]/div[2]/div[2]/div[1]/div/div[2]/hr[3]');
+    const observer = new MutationObserver((mutationsList) => {
+        for (const mutation of mutationsList) {
+            if (mutation.type === 'childList') {
+                // Безопасное удаление всех указанных элементов
+                safeRemoveElementByXPath('/html/body/div[1]/div[2]/div/div/div[2]/div[1]/form/div[2]/div[2]/div[2]/div[1]/div/div[4]');
+                safeRemoveElementByXPath('/html/body/div[1]/div[2]/div/div/div[2]/div[1]/form/div[2]/div[2]/div[2]/div[1]/div/div[5]');
+                safeRemoveElementByXPath('/html/body/div[1]/div[2]/div/div/div[2]/div[1]/form/div[2]/div[2]/div[2]/div[1]/div/div[2]/hr[2]');
+                safeRemoveElementByXPath('/html/body/div[1]/div[2]/div/div/div[2]/div[1]/form/div[2]/div[2]/div[2]/div[1]/div/div[2]/hr[3]');
 
-        // Безопасное перемещение блока
-        safeMoveBlockToBottom();
+                // Безопасное перемещение блока
+                safeMoveBlockToBottom();
+            }
+        }
     });
 
     // Конфигурация наблюдателя: следим за изменениями в дереве DOM
