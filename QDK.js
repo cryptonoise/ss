@@ -1,6 +1,7 @@
 // ==UserScript==
 // @name         QHero Disambiguate Keywords
 // @version      1.0
+// @author       Freem
 // @description  Уточняет ключевые слова на QHero
 // @match        https://qhero.com/*
 // @grant        none
