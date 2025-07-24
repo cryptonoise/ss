@@ -1,6 +1,5 @@
 // ==UserScript==
 // @name         QHero Release OCR
-// @namespace    http://tampermonkey.net/
 // @version      4
 // @description  Распознавание данных релизов для QHero с авто-выбором чекбоксов
 // @author       Freem
