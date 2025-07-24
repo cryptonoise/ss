@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         QHero Release OCR
-// @version      3.5
-// @description  Распознавание данных релизов для QHero с авто-выбором чекбоксов + адаптивные названия релизов
+// @version      3.6
+// @description  Распознавание данных релизов для QHero с авто-выбором чекбоксов + адаптивные названия релизов + Owner name
 // @author       Freem
 // @match        https://qhero.com/collection/*
 // @require      https://unpkg.com/tesseract.js@4.1.0/dist/tesseract.min.js
@@ -43,18 +43,14 @@
 
     // --- Извлечение данных для Model ---
     function extractModelInfo(text) {
-        // Ищем Shoot Name/Ref в первом блоке
         const shootRef = text.match(/Shoot Name\/Ref\s*:\s*(.+?)(?:\r?\n|$)/i)?.[1]?.trim() || null;
 
-        // Ищем второе вхождение Name: (игнорируем первое - фотограф)
         const nameMatches = text.match(/Name\s*:\s*(.+?)(?:\r?\n|$)/gi);
         let modelName = null;
         if (nameMatches && nameMatches.length >= 2) {
-            // Берем второе вхождение и очищаем от "Name: "
             modelName = nameMatches[1].replace(/Name\s*:\s*/i, '').trim();
         }
 
-        // Ищем Date of Birth в блоке Model Information
         const modelSectionStart = text.search(/Model Information/i);
         let birthDate = null;
         if (modelSectionStart !== -1) {
@@ -62,7 +58,6 @@
             birthDate = modelSection.match(/\bDate of Birth.*?\b(\d{1,2}\/\d{1,2}\/\d{2,4})\b/i)?.[1] || null;
         }
 
-        // Ищем Gender в блоке Model Information
         let gender = null;
         if (modelSectionStart !== -1) {
             const modelSection = text.substring(modelSectionStart);
@@ -79,10 +74,9 @@
 
     // --- Извлечение данных для Property ---
     function extractPropertyInfo(text) {
-        // Ищем Shoot Name/Ref в первом блоке
         const shootRef = text.match(/Shoot Name\/Ref\s*:\s*(.+?)(?:\r?\n|$)/i)?.[1]?.trim() || null;
+        const ownerName = text.match(/Owner name\s*:\s*(.+?)(?:\r?\n|$)/i)?.[1]?.trim() || null;
 
-        // Ищем Description в блоке Property Information
         const propertySectionStart = text.search(/Property Information/i);
         let description = null;
         if (propertySectionStart !== -1) {
@@ -92,7 +86,8 @@
 
         return {
             description: description,
-            shootRef: shootRef
+            shootRef: shootRef,
+            ownerName: ownerName
         };
     }
 
@@ -248,7 +243,7 @@
                 stopSpinner(button, '❌ Некорректный релиз', originalText, 2000); return;
             }
 
-            const { description, shootRef } = extractPropertyInfo(result.data.text);
+            const { description, shootRef, ownerName } = extractPropertyInfo(result.data.text);
 
             const propInput = findInputByPlaceholder("Name of property");
             if (description) {
@@ -257,10 +252,13 @@
                 propInput.dispatchEvent(new Event('change', { bubbles: true }));
             }
 
-            if (shootRef) {
+            if (shootRef || ownerName) {
                 const refInput = findInputByPlaceholder("Release Reference");
                 if (refInput) {
-                    refInput.value = shootRef;
+                    let reference = '';
+                    if (ownerName) reference += `[${ownerName}] `;
+                    if (shootRef) reference += shootRef;
+                    refInput.value = reference.trim();
                     refInput.dispatchEvent(new Event('input', { bubbles: true }));
                     refInput.dispatchEvent(new Event('change', { bubbles: true }));
                 }
@@ -278,7 +276,7 @@
         const modalHeader = document.querySelector('.modal-header');
         const modalTitle = document.querySelector('h4.modal-title')?.textContent?.trim();
         if (!modalHeader || modalHeader.querySelector('.ocr-insert-button')) return;
-        if (modalTitle !== 'Edit the release') return; // Проверка на нужное окно
+        if (modalTitle !== 'Edit the release') return;
         modalHeader.style.display = "flex";
         modalHeader.style.justifyContent = "center";
         modalHeader.style.alignItems = "center";
