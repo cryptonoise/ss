@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         QHero Release OCR
-// @version      3.4
+// @version      3.5
 // @description  Распознавание данных релизов для QHero с авто-выбором чекбоксов + адаптивные названия релизов
 // @author       Freem
 // @match        https://qhero.com/collection/*
@@ -41,34 +41,61 @@
         return Tesseract.recognize(imageUrl, language, { logger: () => {} });
     }
 
-    // --- Извлечение данных ---
+    // --- Извлечение данных для Model ---
     function extractModelInfo(text) {
-        let modelSectionText = text;
-        const modelSectionStart = text.search(/Model Information/i);
-        if (modelSectionStart !== -1) {
-            const nextSectionStart = text.substr(modelSectionStart + "Model Information".length)
-                .search(/Model Information|Property Information|Additional Information/i);
-            modelSectionText = nextSectionStart !== -1
-                ? text.substr(modelSectionStart, nextSectionStart + "Model Information".length)
-                : text.substr(modelSectionStart);
+        // Ищем Shoot Name/Ref в первом блоке
+        const shootRef = text.match(/Shoot Name\/Ref\s*:\s*(.+?)(?:\r?\n|$)/i)?.[1]?.trim() || null;
+
+        // Ищем второе вхождение Name: (игнорируем первое - фотограф)
+        const nameMatches = text.match(/Name\s*:\s*(.+?)(?:\r?\n|$)/gi);
+        let modelName = null;
+        if (nameMatches && nameMatches.length >= 2) {
+            // Берем второе вхождение и очищаем от "Name: "
+            modelName = nameMatches[1].replace(/Name\s*:\s*/i, '').trim();
         }
+
+        // Ищем Date of Birth в блоке Model Information
+        const modelSectionStart = text.search(/Model Information/i);
+        let birthDate = null;
+        if (modelSectionStart !== -1) {
+            const modelSection = text.substring(modelSectionStart);
+            birthDate = modelSection.match(/\bDate of Birth.*?\b(\d{1,2}\/\d{1,2}\/\d{2,4})\b/i)?.[1] || null;
+        }
+
+        // Ищем Gender в блоке Model Information
+        let gender = null;
+        if (modelSectionStart !== -1) {
+            const modelSection = text.substring(modelSectionStart);
+            gender = modelSection.match(/Gender\s*:\s*(.+?)(?:\r?\n|$)/i)?.[1]?.trim() || null;
+        }
+
         return {
-            name: text.match(/Name\s*:\s*(.+?)(?:\r?\n|$)/i)?.[1]?.trim() || null,
-            birthDate: text.match(/\bDate of Birth.*?\b(\d{1,2}\/\d{1,2}\/\d{2,4})\b/i)?.[1] || null
+            name: modelName,
+            birthDate: birthDate,
+            gender: gender,
+            shootRef: shootRef
         };
     }
-    function extractGender(text) {
-        return text.match(/Gender\s*:\s*(.+?)(?:\r?\n|$)/i)?.[1]?.trim() || null;
-    }
+
+    // --- Извлечение данных для Property ---
     function extractPropertyInfo(text) {
-        const sectionStart = text.indexOf("Property Information");
-        if (sectionStart === -1) return { description: null };
-        const descMatch = text.substring(sectionStart).match(/Description\s*:\s*(.+?)(?:\r?\n|$)/i);
-        return { description: descMatch?.[1]?.trim() || null };
+        // Ищем Shoot Name/Ref в первом блоке
+        const shootRef = text.match(/Shoot Name\/Ref\s*:\s*(.+?)(?:\r?\n|$)/i)?.[1]?.trim() || null;
+
+        // Ищем Description в блоке Property Information
+        const propertySectionStart = text.search(/Property Information/i);
+        let description = null;
+        if (propertySectionStart !== -1) {
+            const propertySection = text.substring(propertySectionStart);
+            description = propertySection.match(/Description\s*:\s*(.+?)(?:\r?\n|$)/i)?.[1]?.trim() || null;
+        }
+
+        return {
+            description: description,
+            shootRef: shootRef
+        };
     }
-    function extractShootRef(text) {
-        return text.match(/Shoot Name\/Ref\s*:\s*(.+?)(?:\r?\n|$)/i)?.[1]?.trim() || null;
-    }
+
     function containsIncorrectRelease(text, mode) {
         return (mode === 'model' && /Property release/i.test(text)) ||
                (mode === 'property' && /Model release/i.test(text));
@@ -105,6 +132,7 @@
     function findInputByPlaceholder(placeholderText) {
         return document.querySelector(`input[placeholder="${placeholderText}"]`);
     }
+
     function findBirthdateSelects() {
         return {
             yearSelect: document.querySelector('.date-selector .year-selector'),
@@ -112,6 +140,7 @@
             daySelect: document.querySelector('.date-selector .day-selector')
         };
     }
+
     function chooseRadio(value) {
         const radio = document.querySelector(`input[type="radio"][value="${value}"]`);
         if (radio) { radio.click(); radio.dispatchEvent(new Event('change', { bubbles: true })); }
@@ -121,6 +150,7 @@
     function updateSpinner(button, frame) {
         if (button.dataset.spinnerActive === "true") button.textContent = `Распознавание ${frame}`;
     }
+
     function stopSpinner(button, finalText, originalText, delay = 1500) {
         button.dataset.spinnerActive = "false";
         button.textContent = finalText;
@@ -154,9 +184,8 @@
             if (containsIncorrectRelease(result.data.text, 'model')) {
                 stopSpinner(button, '❌ Некорректный релиз', originalText, 2000); return;
             }
-            const { name, birthDate } = extractModelInfo(result.data.text);
-            const gender = extractGender(result.data.text);
-            const shootRef = extractShootRef(result.data.text);
+
+            const { name, birthDate, gender, shootRef } = extractModelInfo(result.data.text);
 
             const nameInput = findInputByPlaceholder("Name of model");
             if (name) {
@@ -164,6 +193,7 @@
                 nameInput.dispatchEvent(new Event('input', { bubbles: true }));
                 nameInput.dispatchEvent(new Event('change', { bubbles: true }));
             }
+
             const { yearSelect, monthSelect, daySelect } = findBirthdateSelects();
             const [monthRaw, dayRaw, yearRaw] = birthDate?.split('/') || [];
             const month = parseInt(monthRaw), day = parseInt(dayRaw), year = parseInt(yearRaw);
@@ -172,12 +202,14 @@
             if (year && yearSelect) await selectDropdownValue(yearSelect, year.toString());
             if (month && monthSelect) await selectDropdownValue(monthSelect, monthNames[month]);
             if (day && daySelect) await selectDropdownValue(daySelect, day.toString());
+
             if (gender) {
                 const genderLabel = Array.from(document.querySelectorAll('label'))
                     .find(label => label.textContent.includes('Model gender'));
                 const genderSelect = genderLabel?.nextElementSibling;
                 if (genderSelect) await selectGender(genderSelect, gender);
             }
+
             if (shootRef) {
                 const refInput = findInputByPlaceholder("Release Reference");
                 if (refInput) {
@@ -186,8 +218,10 @@
                     refInput.dispatchEvent(new Event('change', { bubbles: true }));
                 }
             }
+
             stopSpinner(button, '✅ Готово', originalText);
         } catch (e) {
+            console.error('Ошибка OCR:', e);
             stopSpinner(button, '❌ Ошибка', originalText, 2000);
         }
     }
@@ -213,14 +247,16 @@
             if (containsIncorrectRelease(result.data.text, 'property')) {
                 stopSpinner(button, '❌ Некорректный релиз', originalText, 2000); return;
             }
-            const { description } = extractPropertyInfo(result.data.text);
-            const shootRef = extractShootRef(result.data.text);
+
+            const { description, shootRef } = extractPropertyInfo(result.data.text);
+
             const propInput = findInputByPlaceholder("Name of property");
             if (description) {
                 propInput.value = description;
                 propInput.dispatchEvent(new Event('input', { bubbles: true }));
                 propInput.dispatchEvent(new Event('change', { bubbles: true }));
             }
+
             if (shootRef) {
                 const refInput = findInputByPlaceholder("Release Reference");
                 if (refInput) {
@@ -229,8 +265,10 @@
                     refInput.dispatchEvent(new Event('change', { bubbles: true }));
                 }
             }
+
             stopSpinner(button, '✅ Готово', originalText);
         } catch (e) {
+            console.error('Ошибка OCR:', e);
             stopSpinner(button, '❌ Ошибка', originalText, 2000);
         }
     }
@@ -241,7 +279,6 @@
         const modalTitle = document.querySelector('h4.modal-title')?.textContent?.trim();
         if (!modalHeader || modalHeader.querySelector('.ocr-insert-button')) return;
         if (modalTitle !== 'Edit the release') return; // Проверка на нужное окно
-
         modalHeader.style.display = "flex";
         modalHeader.style.justifyContent = "center";
         modalHeader.style.alignItems = "center";
