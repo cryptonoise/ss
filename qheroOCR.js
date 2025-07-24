@@ -18,13 +18,20 @@
     }
     // --- Извлечение данных ---
     function extractModelInfo(text) {
-        // Ищем секцию "Model Information"
-        const modelSectionMatch = text.match(/Model Information([\s\S]*?)(?=\n{2,}|$)/i);
-        let modelSectionText = text; // fallback на весь текст
-        if (modelSectionMatch) {
-            modelSectionText = modelSectionMatch[1];
+        let modelSectionText = text; // По умолчанию ищем во всем тексте
+        // Ищем начало секции "Model Information"
+        const modelSectionStart = text.search(/Model Information/i);
+        if (modelSectionStart !== -1) {
+            // Если секция найдена, ищем текст до следующей секции (например, "Property Information") или до конца текста
+            const nextSectionStart = text.substr(modelSectionStart + "Model Information".length).search(/Model Information|Property Information|Additional Information/i);
+            if (nextSectionStart !== -1) {
+                modelSectionText = text.substr(modelSectionStart, nextSectionStart + "Model Information".length);
+            } else {
+                // Если следующая секция не найдена, берем текст до конца
+                modelSectionText = text.substr(modelSectionStart);
+            }
         }
-        // В секции ищем Name и Date
+    // В найденном тексте ищем Name и Date
         const nameRegex = /Name\s*:\s*(.+?)(?:\r?\n|$)/i;
         const dateRegex = /\bDate of Birth.*?\b(\d{1,2}\/\d{1,2}\/\d{2,4})\b/i;
         return {
