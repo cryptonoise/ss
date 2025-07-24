@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         QHero Release OCR
-// @version      4
+// @version      3.1
 // @description  Распознавание данных релизов для QHero с авто-выбором чекбоксов
 // @author       Freem
 // @match        https://qhero.com/collection/*
@@ -31,13 +31,18 @@
                 modelSectionText = text.substr(modelSectionStart);
             }
         }
-    // В найденном тексте ищем Name и Date
+        // Ищем Name и Date
         const nameRegex = /Name\s*:\s*(.+?)(?:\r?\n|$)/i;
         const dateRegex = /\bDate of Birth.*?\b(\d{1,2}\/\d{1,2}\/\d{2,4})\b/i;
         return {
             name: modelSectionText.match(nameRegex)?.[1]?.trim() || null,
             birthDate: text.match(dateRegex)?.[1] || null // Date ищем во всем тексте, т.к. она может быть вне секции
         };
+    }
+    // Ищем Gender
+    function extractGender(text) {
+        const genderRegex = /Gender\s*:\s*(.+?)(?:\r?\n|$)/i;
+        return text.match(genderRegex)?.[1]?.trim() || null;
     }
     function extractPropertyInfo(text) {
         const sectionStart = text.indexOf("Property Information");
@@ -75,6 +80,38 @@
                 }
                 const cleaned = s => s.trim().toLowerCase();
                 const target = cleaned(valueStr);
+                const found = labels.find(label => cleaned(label.textContent || '') === target);
+                const li = found?.closest('li');
+                if (!li) return resolve(false);
+                li.scrollIntoView({ behavior: "smooth", block: "center" });
+                li.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+                li.click();
+                setTimeout(() => {
+                    document.body.click();
+                    resolve(true);
+                }, 200);
+            };
+            setTimeout(() => trySelect(1), 150);
+        });
+    }
+    // Добавлено: Вставка пола
+    async function selectGender(container, genderStr) {
+        return new Promise((resolve) => {
+            const trigger = container.querySelector('.select2-choice, .select2-selection, .select2-selection__rendered');
+            if (!trigger) return resolve(false);
+            trigger.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+            const trySelect = (attempt = 1) => {
+                const labels = Array.from(document.querySelectorAll('.select2-result-label'));
+                if (!labels.length) {
+                    if (attempt < 10) {
+                        setTimeout(() => trySelect(attempt + 1), 100);
+                    } else {
+                        resolve(false);
+                    }
+                    return;
+                }
+                const cleaned = s => s.trim().toLowerCase();
+                const target = cleaned(genderStr);
                 const found = labels.find(label => cleaned(label.textContent || '') === target);
                 const li = found?.closest('li');
                 if (!li) return resolve(false);
@@ -151,6 +188,7 @@
                 return;
             }
             const { name, birthDate } = extractModelInfo(result.data.text);
+            const gender = extractGender(result.data.text); // Извлекаем пол
             const shootRef = extractShootRef(result.data.text); // Извлекаем Shoot Name/Ref
             const nameInput = findInputByPlaceholder("Name of model");
             if (name) {
@@ -166,7 +204,15 @@
             if (year && yearSelect) await selectDropdownValue(yearSelect, year.toString());
             if (month && monthSelect) await selectDropdownValue(monthSelect, monthNames[month]);
             if (day && daySelect) await selectDropdownValue(daySelect, day.toString());
-
+            // Добавлено: Выбираем пол, если он найден
+            if (gender) {
+                // Ищем контейнер дропдауна пола (ищем по метке)
+                const genderLabel = Array.from(document.querySelectorAll('label'))
+                    .find(label => label.textContent.includes('Model gender'));
+                const genderSelect = genderLabel?.nextElementSibling ||
+                                     document.querySelector('.country-selector:not(.date-selector *)');
+                if (genderSelect) await selectGender(genderSelect, gender);
+            }
             // Вставляем Shoot Name/Ref в поле "Release Reference" для Model
             if (shootRef) {
                 const refInput = findInputByPlaceholder("Release Reference");
@@ -176,7 +222,6 @@
                     refInput.dispatchEvent(new Event('change', { bubbles: true }));
                 }
             }
-
             stopSpinner(button, '✅ Готово', originalText);
         } catch (e) {
             console.error("[OCR Model Error]", e.message); // Можно удалить
@@ -217,7 +262,6 @@
                 propInput.dispatchEvent(new Event('input', { bubbles: true }));
                 propInput.dispatchEvent(new Event('change', { bubbles: true }));
             }
-
              // Вставляем Shoot Name/Ref в поле "Release Reference" для Property
              if (shootRef) {
                 const refInput = findInputByPlaceholder("Release Reference");
@@ -227,7 +271,6 @@
                     refInput.dispatchEvent(new Event('change', { bubbles: true }));
                 }
             }
-
             stopSpinner(button, '✅ Готово', originalText);
         } catch (e) {
             console.error("[OCR Property Error]", e.message); // Можно удалить
