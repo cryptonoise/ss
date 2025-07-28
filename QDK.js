@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         QHero Disambiguate Keywords
-// @version      1.4
+// @version      1.7
 // @author       Freem
-// @description  Уточняет ключевые слова QHero
+// @description  Уточнение ключевых слов на QHero
 // @match        https://qhero.com/*
 // @grant        none
 // ==/UserScript==
@@ -10,210 +10,146 @@
 (function () {
     'use strict';
 
-    const CLICK_DELAY_MS = 200;
-    const DONE_DISPLAY_TIME_MS = 3000;
+    const CONFIG = {
+        CLICK_DELAY_MS: 200,        // Задержка между кликами (в миллисекундах)
+        DONE_DISPLAY_TIME_MS: 3000, // Время отображения кнопки "Done" (в миллисекундах)
+        // Цвета кнопки
+        COLORS: {
+            PLAY_BG: '#ffc0cb',     // Цвет фона в состоянии "Start"
+            PAUSE_BG: '#fd7e14',    // Цвет фона в состоянии "Pause"
+            DONE_BG: '#20c997',     // Цвет фона в состоянии "Done"
+            BORDER: '#333',         // Цвет рамки кнопки
+            TEXT: '#000'            // Цвет текста
+        }
+    };
 
     let isRunning = false;
     let controlButton = null;
-    let buttonContainer = null;
 
-    // Добавляем стили для 3D-эффекта
-    const style = document.createElement('style');
-    style.textContent = `
-        .qhero-3d-button {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            z-index: 99999;
-            width: 120px;
-            height: 40px;
-            transition: transform 4s;
-            transform-style: preserve-3d;
-            transform: perspective(1000px) rotateX(0deg);
-            cursor: pointer;
-        }
+    // Добавляет стили кнопки
+    function injectStyles() {
+        const style = document.createElement('style');
+        style.textContent = `
+            .qhero-3d-btn {
+                position: fixed; bottom: 20px; left: 20px; z-index: 99999;
+                width: 120px; height: 40px;
+                transform-style: preserve-3d; transform: perspective(1000px);
+                transition: transform 4s; cursor: pointer;
+            }
+            .qhero-3d-btn:hover { transform: perspective(1000px) rotateX(360deg); }
+            .qhero-3d-btn span {
+                position: absolute; width: 100%; height: 100%;
+                display: flex; align-items: center; justify-content: center;
+                font: 14px Arial, sans-serif; letter-spacing: 1px;
+                border: 1px solid ${CONFIG.COLORS.BORDER}; backface-visibility: hidden; transition: 0.5s;
+            }
+            .qhero-3d-btn span:nth-child(1) { transform: rotateX(360deg) translateZ(20px); }
+            .qhero-3d-btn span:nth-child(2) { transform: rotateX(270deg) translateZ(20px); }
+            .qhero-3d-btn span:nth-child(3) { transform: rotateX(180deg) translateZ(20px); }
+            .qhero-3d-btn span:nth-child(4) { transform: rotateX(90deg) translateZ(20px); }
+            .qhero-play span { background: ${CONFIG.COLORS.PLAY_BG}; color: ${CONFIG.COLORS.TEXT}; }
+            .qhero-pause span { background: ${CONFIG.COLORS.PAUSE_BG}; color: ${CONFIG.COLORS.TEXT}; }
+            .qhero-done span { background: ${CONFIG.COLORS.DONE_BG}; color: ${CONFIG.COLORS.TEXT}; pointer-events: none; }
+        `;
+        document.head.appendChild(style);
+    }
 
-        .qhero-3d-button:hover {
-            transform: perspective(1000px) rotateX(360deg);
-        }
-
-        .qhero-3d-button span {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            letter-spacing: 1px;
-            transition: 0.5s;
-            border: 1px solid #333;
-            box-sizing: border-box;
-            backface-visibility: hidden;
-        }
-
-        .qhero-3d-button:hover span {
-            color: #fff;
-        }
-
-        .qhero-3d-button span:nth-child(1) {
-            transform: rotateX(360deg) translateZ(20px);
-        }
-
-        .qhero-3d-button span:nth-child(2) {
-            transform: rotateX(270deg) translateZ(20px);
-        }
-
-        .qhero-3d-button span:nth-child(3) {
-            transform: rotateX(180deg) translateZ(20px);
-        }
-
-        .qhero-3d-button span:nth-child(4) {
-            transform: rotateX(90deg) translateZ(20px);
-        }
-
-        /* Стили для разных состояний */
-        .qhero-play span {
-            color: #000;
-            background: #b76e79; /* Розовый */
-        }
-
-        .qhero-pause span {
-            color: #000;
-            background: #fd7e14; /* Оранжевый */
-        }
-
-        .qhero-done span {
-            color: #000;
-            background: #20c997; /* Бирюзовый */
-            pointer-events: none;
-        }
-    `;
-    document.head.appendChild(style);
-
+    // Создаёт кнопку
     function createControlButton() {
         if (controlButton) return;
-
-        // Создаем контейнер для 3D-кнопки
-        buttonContainer = document.createElement('div');
-        buttonContainer.className = 'qhero-3d-button qhero-play';
-
-        // Создаем 4 спана для 3D-эффекта
+        controlButton = document.createElement('div');
+        controlButton.className = 'qhero-3d-btn qhero-play';
         for (let i = 0; i < 4; i++) {
             const span = document.createElement('span');
             span.textContent = '▶ Start';
-            buttonContainer.appendChild(span);
+            controlButton.appendChild(span);
         }
-
-        buttonContainer.addEventListener('click', () => {
-            isRunning = !isRunning;
-            if (isRunning) {
-                // Обновляем текст на всех спанах
-                buttonContainer.querySelectorAll('span').forEach(span => {
-                    span.textContent = '⏸ Pause';
-                });
-                buttonContainer.className = 'qhero-3d-button qhero-pause';
-                loopProcessing();
-            } else {
-                buttonContainer.querySelectorAll('span').forEach(span => {
-                    span.textContent = '▶ Start';
-                });
-                buttonContainer.className = 'qhero-3d-button qhero-play';
-            }
-        });
-
-        document.body.appendChild(buttonContainer);
-        controlButton = buttonContainer;
+        controlButton.addEventListener('click', toggleProcessing);
+        document.body.appendChild(controlButton);
     }
 
+    // Удаляет кнопку
     function removeControlButton() {
         if (controlButton) {
             controlButton.remove();
             controlButton = null;
-            buttonContainer = null;
         }
     }
 
+    // Старт/пауза
+    function toggleProcessing() {
+        isRunning = !isRunning;
+        if (isRunning) {
+            updateButtonText('⏸ Pause');
+            controlButton.className = 'qhero-3d-btn qhero-pause';
+            loopProcessing();
+        } else {
+            resetToStart();
+        }
+    }
+
+    // Обновляет текст на кнопке
+    function updateButtonText(text) {
+        controlButton.querySelectorAll('span').forEach(span => span.textContent = text);
+    }
+
+    // Сброс кнопки в Start
     function resetToStart() {
         if (controlButton) {
-            controlButton.querySelectorAll('span').forEach(span => {
-                span.textContent = '▶ Start';
-            });
-            controlButton.className = 'qhero-3d-button qhero-play';
+            updateButtonText('▶ Start');
+            controlButton.className = 'qhero-3d-btn qhero-play';
             isRunning = false;
         }
     }
 
+    // Показывает "Done" и возвращается к "Start"
     function showDoneAndReset() {
         if (!controlButton) return;
-
-        // Показываем Done
-        controlButton.querySelectorAll('span').forEach(span => {
-            span.textContent = '✔ Done';
-        });
-        controlButton.className = 'qhero-3d-button qhero-done';
-
-        // Через 3 секунды возвращаем в состояние "Start"
-        setTimeout(() => {
-            resetToStart();
-        }, DONE_DISPLAY_TIME_MS);
+        updateButtonText('✔ Done');
+        controlButton.className = 'qhero-3d-btn qhero-done';
+        setTimeout(resetToStart, CONFIG.DONE_DISPLAY_TIME_MS);
     }
 
+    // Проверяет активна ли вкладка "Terms"
     function isActiveTabTerms() {
-        const activeTabs = document.querySelectorAll('li.active a');
-        return Array.from(activeTabs).some(a => {
-            return a.textContent.trim().includes('Terms');
-        });
+        return Array.from(document.querySelectorAll('li.active a'))
+            .some(a => a.textContent.includes('Terms'));
     }
 
-    function delay(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
+    const delay = ms => new Promise(r => setTimeout(r, ms));
+    const clickElement = el => el?.click();
 
-    async function clickElement(el) {
-        if (el) el.click();
-    }
-
+    // Обрабатывает следующий элемент
     async function processNextDisambiguation() {
         const all = Array.from(document.querySelectorAll('div.row.property.keyword'));
-        const nextYellow = all.find(div =>
-            window.getComputedStyle(div).backgroundColor === 'rgb(255, 255, 224)' &&
+        const next = all.find(div =>
+            getComputedStyle(div).backgroundColor === 'rgb(255, 255, 224)' &&
             !div.dataset.processed
         );
+        if (!next) return false;
 
-        if (!nextYellow) return false;
+        next.dataset.processed = "true";
+        next.style.backgroundColor = '#ccffcc';
+        next.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-        nextYellow.dataset.processed = "true";
-        nextYellow.style.backgroundColor = '#ccffcc';
-        nextYellow.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-        let el = nextYellow;
-        let nextAsset = null;
+        let el = next, asset = null;
         while (el = el.nextElementSibling) {
-            if (el.classList.contains('asset-prop')) {
-                nextAsset = el;
-                break;
-            }
-            if (el.classList.contains('row') && el.classList.contains('property') && el.classList.contains('keyword')) {
-                break;
-            }
+            if (el.classList.contains('asset-prop')) { asset = el; break; }
+            if (el.classList.contains('property') && el.classList.contains('keyword')) break;
         }
+        if (!asset) return true;
 
-        if (!nextAsset) return true;
+        const textBlock = asset.querySelector('.col-xs-8.full-view.row-header');
+        if (textBlock) clickElement(textBlock);
 
-        const textBlock = nextAsset.querySelector('.col-xs-8.full-view.row-header');
-        if (textBlock) await clickElement(textBlock);
-
-        const addRest = [...nextAsset.querySelectorAll('a')]
+        const addRest = [...asset.querySelectorAll('a')]
             .find(a => a.textContent.trim().startsWith('Add to rest'));
-        if (addRest) await clickElement(addRest);
+        if (addRest) clickElement(addRest);
 
         return true;
     }
 
+    // Основной цикл
     async function loopProcessing() {
         while (isRunning) {
             const didWork = await processNextDisambiguation();
@@ -221,17 +157,16 @@
                 showDoneAndReset();
                 break;
             }
-            await delay(CLICK_DELAY_MS);
+            await delay(CONFIG.CLICK_DELAY_MS);
         }
     }
 
-    // Отслеживаем активность вкладки Terms
+    injectStyles();
+
+    // Показывает кнопку, если вкладка "Terms" активна
     setInterval(() => {
-        if (isActiveTabTerms()) {
-            createControlButton(); // Создаём кнопку только если вкладка Terms активна
-        } else {
-            removeControlButton(); // Удаляем кнопку если вкладка Terms не активна
-        }
+        if (isActiveTabTerms()) createControlButton();
+        else removeControlButton();
     }, 1000);
 
 })();
