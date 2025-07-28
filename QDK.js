@@ -129,6 +129,14 @@
         controlButton = buttonContainer;
     }
 
+    function removeControlButton() {
+        if (controlButton) {
+            controlButton.remove();
+            controlButton = null;
+            buttonContainer = null;
+        }
+    }
+
     function resetToStart() {
         if (controlButton) {
             controlButton.querySelectorAll('span').forEach(span => {
@@ -156,7 +164,9 @@
 
     function isActiveTabTerms() {
         const activeTabs = document.querySelectorAll('li.active a');
-        return Array.from(activeTabs).some(a => a.textContent.trim().includes('Terms'));
+        return Array.from(activeTabs).some(a => {
+            return a.textContent.trim().includes('Terms');
+        });
     }
 
     function delay(ms) {
@@ -218,7 +228,9 @@
     // Отслеживаем активность вкладки Terms
     setInterval(() => {
         if (isActiveTabTerms()) {
-            createControlButton();
+            createControlButton(); // Создаём кнопку только если вкладка Terms активна
+        } else {
+            removeControlButton(); // Удаляем кнопку если вкладка Terms не активна
         }
     }, 1000);
 
