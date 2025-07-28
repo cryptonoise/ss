@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         QHero Disambiguate Keywords
-// @version      2.0
+// @version      2.1
 // @author       Freem
 // @description  Уточнение ключевых слов на QHero
 // @match        https://qhero.com/*
@@ -32,7 +32,6 @@
     let controlButton = null;
     let buttonInserted = false;
     let isTermsActive = false;
-
 
     // Добавляет стили кнопки
     function injectStyles() {
@@ -142,12 +141,14 @@
     function updateButtonState() {
         if (!controlButton) return;
 
+        // Не обновляем, если кнопка ещё в состоянии "Done"
+        const wasDone = controlButton.classList.contains('qhero-done');
+        if (wasDone) return;
+
         isTermsActive = isActiveTabTerms();
 
         if (isTermsActive) {
-            // Вкладка Terms активна - кнопка активна
             controlButton.classList.remove('qhero-3d-btn-disabled');
-            // Восстанавливаем предыдущее состояние (если было)
             if (isRunning) {
                 updateButtonText('⏸ Pause');
                 controlButton.className = 'qhero-3d-btn qhero-pause';
@@ -156,9 +157,8 @@
                 controlButton.className = 'qhero-3d-btn qhero-play';
             }
         } else {
-            // Вкладка Terms не активна - кнопка заблокирована с крестиком
             controlButton.classList.add('qhero-3d-btn-disabled');
-            updateButtonText('✖'); // Показываем крестик
+            updateButtonText('✖');
             controlButton.className = 'qhero-3d-btn qhero-disabled qhero-3d-btn-disabled';
         }
     }
@@ -182,8 +182,12 @@
     // Показывает "Done" и возвращается к "Start"
     function showDoneAndReset() {
         if (!controlButton || !isTermsActive) return;
+
+        isRunning = false; // Критически важно: процесс завершён
+
         updateButtonText('✔ Done');
         controlButton.className = 'qhero-3d-btn qhero-done';
+
         setTimeout(() => {
             if (isTermsActive) {
                 resetToStart();
@@ -236,12 +240,13 @@
         }
     }
 
+    // === ИНИЦИАЛИЗАЦИЯ ===
     injectStyles();
 
-    // Показывает кнопку всегда, но обновляет её состояние
+    // Периодически пытаемся создать кнопку и обновить её состояние
     setInterval(() => {
-        createControlButton(); // Создаём кнопку если ещё не создана
-        updateButtonState();   // Обновляем состояние кнопки
+        createControlButton();   // Создаёт, если ещё нет
+        updateButtonState();     // Обновляет состояние, кроме состояния Done
     }, 1000);
 
 })();
