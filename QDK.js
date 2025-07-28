@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         QHero Disambiguate Keywords
-// @version      1.8
+// @version      2.0
 // @author       Freem
 // @description  Уточнение ключевых слов на QHero
 // @match        https://qhero.com/*
@@ -18,6 +18,7 @@
             PLAY_BG: '#ffc0cb',     // Цвет фона в состоянии "Start"
             PAUSE_BG: '#fd7e14',    // Цвет фона в состоянии "Pause"
             DONE_BG: '#20c997',     // Цвет фона в состоянии "Done"
+            DISABLED_BG: '#ccc',    // Цвет фона в состоянии "Disabled"
             BORDER: '#333',         // Цвет рамки кнопки
             TEXT: '#000'            // Цвет текста
         },
@@ -29,52 +30,64 @@
 
     let isRunning = false;
     let controlButton = null;
-    let buttonInserted = false; // Флаг для отслеживания вставки кнопки
+    let buttonInserted = false;
+    let isTermsActive = false;
+
 
     // Добавляет стили кнопки
     function injectStyles() {
         const style = document.createElement('style');
         style.textContent = `
-            .qhero-3d-btn {
-                display: inline-block;
-                width: ${CONFIG.BUTTON.WIDTH};
-                height: ${CONFIG.BUTTON.HEIGHT};
-                margin-left: 10px;
-                transform-style: preserve-3d;
-                transform: perspective(1000px);
-                transition: transform 2s;
-                cursor: pointer;
-                vertical-align: middle;
-            }
-            .qhero-3d-btn:hover { transform: perspective(1000px) rotateX(360deg); }
-            .qhero-3d-btn span {
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font: 12px Arial, sans-serif;
-                letter-spacing: 0.5px;
-                border: 1px solid ${CONFIG.COLORS.BORDER};
-                backface-visibility: hidden;
-                transition: 0.3s;
-            }
-            .qhero-3d-btn span:nth-child(1) { transform: rotateX(360deg) translateZ(15px); }
-            .qhero-3d-btn span:nth-child(2) { transform: rotateX(270deg) translateZ(15px); }
-            .qhero-3d-btn span:nth-child(3) { transform: rotateX(180deg) translateZ(15px); }
-            .qhero-3d-btn span:nth-child(4) { transform: rotateX(90deg) translateZ(15px); }
-            .qhero-play span { background: ${CONFIG.COLORS.PLAY_BG}; color: ${CONFIG.COLORS.TEXT}; }
-            .qhero-pause span { background: ${CONFIG.COLORS.PAUSE_BG}; color: ${CONFIG.COLORS.TEXT}; }
-            .qhero-done span { background: ${CONFIG.COLORS.DONE_BG}; color: ${CONFIG.COLORS.TEXT}; pointer-events: none; }
-        `;
+        .qhero-button-container {
+            display: inline-block; vertical-align: middle;
+            margin-left: 15px; position: relative; top: 5px;
+        }
+
+        .qhero-3d-btn {
+            display: inline-block; width: ${CONFIG.BUTTON.WIDTH}; height: ${CONFIG.BUTTON.HEIGHT};
+            transform-style: preserve-3d; transform: perspective(1000px);
+            transition: transform 2s; cursor: pointer; vertical-align: middle;
+        }
+
+        .qhero-3d-btn-disabled { cursor: not-allowed; opacity: 0.6; }
+
+        .qhero-3d-btn:hover:not(.qhero-3d-btn-disabled) {
+            transform: perspective(1000px) rotateX(360deg);
+        }
+
+        .qhero-3d-btn span {
+            position: absolute; width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            font: 12px Arial, sans-serif; letter-spacing: 0.5px;
+            border: 1px solid ${CONFIG.COLORS.BORDER};
+            backface-visibility: hidden; transition: 0.3s;
+        }
+
+        /* 3D transforms */
+        .qhero-3d-btn span:nth-child(1) { transform: rotateX(360deg) translateZ(15px); }
+        .qhero-3d-btn span:nth-child(2) { transform: rotateX(270deg) translateZ(15px); }
+        .qhero-3d-btn span:nth-child(3) { transform: rotateX(180deg) translateZ(15px); }
+        .qhero-3d-btn span:nth-child(4) { transform: rotateX(90deg) translateZ(15px); }
+
+        /* Button states */
+        .qhero-play span { background: ${CONFIG.COLORS.PLAY_BG}; color: ${CONFIG.COLORS.TEXT}; }
+        .qhero-pause span { background: ${CONFIG.COLORS.PAUSE_BG}; color: ${CONFIG.COLORS.TEXT}; }
+        .qhero-done span { background: ${CONFIG.COLORS.DONE_BG}; color: ${CONFIG.COLORS.TEXT}; pointer-events: none; }
+        .qhero-disabled span { background: ${CONFIG.COLORS.DISABLED_BG}; color: ${CONFIG.COLORS.TEXT}; }
+    `;
         document.head.appendChild(style);
+    }
+
+    // Проверяет активна ли вкладка "Terms"
+    function isActiveTabTerms() {
+        return Array.from(document.querySelectorAll('li.active a'))
+            .some(a => a.textContent.includes('Terms'));
     }
 
     // Создаёт кнопку и вставляет её после вкладки "Accepted"
     function createControlButton() {
-        // Проверяем, не создана ли уже кнопка или не вставлена
-        if (controlButton || buttonInserted) return;
+        // Проверяем, не создана ли уже кнопка
+        if (buttonInserted) return;
 
         // Ищем вкладку "Accepted"
         const acceptedTab = Array.from(document.querySelectorAll('li a'))
@@ -84,8 +97,7 @@
 
         // Создаем контейнер для кнопки
         const buttonContainer = document.createElement('li');
-        buttonContainer.style.display = 'inline-block';
-        buttonContainer.style.verticalAlign = 'middle';
+        buttonContainer.className = 'qhero-button-container';
 
         // Создаем 3D кнопку
         controlButton = document.createElement('div');
@@ -97,7 +109,7 @@
             controlButton.appendChild(span);
         }
 
-        controlButton.addEventListener('click', toggleProcessing);
+        controlButton.addEventListener('click', handleButtonClick);
         buttonContainer.appendChild(controlButton);
 
         // Вставляем кнопку после вкладки "Accepted"
@@ -109,19 +121,13 @@
         }
 
         buttonInserted = true;
+        updateButtonState(); // Устанавливаем начальное состояние
     }
 
-    // Удаляет кнопку
-    function removeControlButton() {
-        if (controlButton && controlButton.parentNode) {
-            controlButton.parentNode.remove();
-            controlButton = null;
-            buttonInserted = false;
-        }
-    }
+    // Обработчик клика по кнопке
+    function handleButtonClick() {
+        if (!isTermsActive) return; // Игнорируем клики если Terms не активна
 
-    // Старт/пауза
-    function toggleProcessing() {
         isRunning = !isRunning;
         if (isRunning) {
             updateButtonText('⏸ Pause');
@@ -129,6 +135,31 @@
             loopProcessing();
         } else {
             resetToStart();
+        }
+    }
+
+    // Обновляет состояние кнопки в зависимости от активности вкладки Terms
+    function updateButtonState() {
+        if (!controlButton) return;
+
+        isTermsActive = isActiveTabTerms();
+
+        if (isTermsActive) {
+            // Вкладка Terms активна - кнопка активна
+            controlButton.classList.remove('qhero-3d-btn-disabled');
+            // Восстанавливаем предыдущее состояние (если было)
+            if (isRunning) {
+                updateButtonText('⏸ Pause');
+                controlButton.className = 'qhero-3d-btn qhero-pause';
+            } else {
+                updateButtonText('▶ Start');
+                controlButton.className = 'qhero-3d-btn qhero-play';
+            }
+        } else {
+            // Вкладка Terms не активна - кнопка заблокирована с крестиком
+            controlButton.classList.add('qhero-3d-btn-disabled');
+            updateButtonText('✖'); // Показываем крестик
+            controlButton.className = 'qhero-3d-btn qhero-disabled qhero-3d-btn-disabled';
         }
     }
 
@@ -141,7 +172,7 @@
 
     // Сброс кнопки в Start
     function resetToStart() {
-        if (controlButton) {
+        if (controlButton && isTermsActive) {
             updateButtonText('▶ Start');
             controlButton.className = 'qhero-3d-btn qhero-play';
             isRunning = false;
@@ -150,16 +181,14 @@
 
     // Показывает "Done" и возвращается к "Start"
     function showDoneAndReset() {
-        if (!controlButton) return;
+        if (!controlButton || !isTermsActive) return;
         updateButtonText('✔ Done');
         controlButton.className = 'qhero-3d-btn qhero-done';
-        setTimeout(resetToStart, CONFIG.DONE_DISPLAY_TIME_MS);
-    }
-
-    // Проверяет активна ли вкладка "Terms"
-    function isActiveTabTerms() {
-        return Array.from(document.querySelectorAll('li.active a'))
-            .some(a => a.textContent.includes('Terms'));
+        setTimeout(() => {
+            if (isTermsActive) {
+                resetToStart();
+            }
+        }, CONFIG.DONE_DISPLAY_TIME_MS);
     }
 
     const delay = ms => new Promise(r => setTimeout(r, ms));
@@ -197,7 +226,7 @@
 
     // Основной цикл
     async function loopProcessing() {
-        while (isRunning) {
+        while (isRunning && isTermsActive) {
             const didWork = await processNextDisambiguation();
             if (!didWork) {
                 showDoneAndReset();
@@ -209,13 +238,10 @@
 
     injectStyles();
 
-    // Показывает кнопку, если вкладка "Terms" активна
+    // Показывает кнопку всегда, но обновляет её состояние
     setInterval(() => {
-        if (isActiveTabTerms()) {
-            createControlButton();
-        } else {
-            removeControlButton();
-        }
+        createControlButton(); // Создаём кнопку если ещё не создана
+        updateButtonState();   // Обновляем состояние кнопки
     }, 1000);
 
 })();
