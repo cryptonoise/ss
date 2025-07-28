@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         QHero Disambiguate Keywords
-// @version      1.7
+// @version      1.8
 // @author       Freem
 // @description  Уточнение ключевых слов на QHero
 // @match        https://qhero.com/*
@@ -20,33 +20,50 @@
             DONE_BG: '#20c997',     // Цвет фона в состоянии "Done"
             BORDER: '#333',         // Цвет рамки кнопки
             TEXT: '#000'            // Цвет текста
+        },
+        BUTTON: {
+            WIDTH: '80px',          // Ширина кнопки
+            HEIGHT: '30px'          // Высота кнопки
         }
     };
 
     let isRunning = false;
     let controlButton = null;
+    let buttonInserted = false; // Флаг для отслеживания вставки кнопки
 
     // Добавляет стили кнопки
     function injectStyles() {
         const style = document.createElement('style');
         style.textContent = `
             .qhero-3d-btn {
-                position: fixed; bottom: 20px; left: 20px; z-index: 99999;
-                width: 120px; height: 40px;
-                transform-style: preserve-3d; transform: perspective(1000px);
-                transition: transform 4s; cursor: pointer;
+                display: inline-block;
+                width: ${CONFIG.BUTTON.WIDTH};
+                height: ${CONFIG.BUTTON.HEIGHT};
+                margin-left: 10px;
+                transform-style: preserve-3d;
+                transform: perspective(1000px);
+                transition: transform 2s;
+                cursor: pointer;
+                vertical-align: middle;
             }
             .qhero-3d-btn:hover { transform: perspective(1000px) rotateX(360deg); }
             .qhero-3d-btn span {
-                position: absolute; width: 100%; height: 100%;
-                display: flex; align-items: center; justify-content: center;
-                font: 14px Arial, sans-serif; letter-spacing: 1px;
-                border: 1px solid ${CONFIG.COLORS.BORDER}; backface-visibility: hidden; transition: 0.5s;
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font: 12px Arial, sans-serif;
+                letter-spacing: 0.5px;
+                border: 1px solid ${CONFIG.COLORS.BORDER};
+                backface-visibility: hidden;
+                transition: 0.3s;
             }
-            .qhero-3d-btn span:nth-child(1) { transform: rotateX(360deg) translateZ(20px); }
-            .qhero-3d-btn span:nth-child(2) { transform: rotateX(270deg) translateZ(20px); }
-            .qhero-3d-btn span:nth-child(3) { transform: rotateX(180deg) translateZ(20px); }
-            .qhero-3d-btn span:nth-child(4) { transform: rotateX(90deg) translateZ(20px); }
+            .qhero-3d-btn span:nth-child(1) { transform: rotateX(360deg) translateZ(15px); }
+            .qhero-3d-btn span:nth-child(2) { transform: rotateX(270deg) translateZ(15px); }
+            .qhero-3d-btn span:nth-child(3) { transform: rotateX(180deg) translateZ(15px); }
+            .qhero-3d-btn span:nth-child(4) { transform: rotateX(90deg) translateZ(15px); }
             .qhero-play span { background: ${CONFIG.COLORS.PLAY_BG}; color: ${CONFIG.COLORS.TEXT}; }
             .qhero-pause span { background: ${CONFIG.COLORS.PAUSE_BG}; color: ${CONFIG.COLORS.TEXT}; }
             .qhero-done span { background: ${CONFIG.COLORS.DONE_BG}; color: ${CONFIG.COLORS.TEXT}; pointer-events: none; }
@@ -54,25 +71,52 @@
         document.head.appendChild(style);
     }
 
-    // Создаёт кнопку
+    // Создаёт кнопку и вставляет её после вкладки "Accepted"
     function createControlButton() {
-        if (controlButton) return;
+        // Проверяем, не создана ли уже кнопка или не вставлена
+        if (controlButton || buttonInserted) return;
+
+        // Ищем вкладку "Accepted"
+        const acceptedTab = Array.from(document.querySelectorAll('li a'))
+            .find(a => a.textContent.trim().includes('Accepted'));
+
+        if (!acceptedTab) return;
+
+        // Создаем контейнер для кнопки
+        const buttonContainer = document.createElement('li');
+        buttonContainer.style.display = 'inline-block';
+        buttonContainer.style.verticalAlign = 'middle';
+
+        // Создаем 3D кнопку
         controlButton = document.createElement('div');
         controlButton.className = 'qhero-3d-btn qhero-play';
+
         for (let i = 0; i < 4; i++) {
             const span = document.createElement('span');
             span.textContent = '▶ Start';
             controlButton.appendChild(span);
         }
+
         controlButton.addEventListener('click', toggleProcessing);
-        document.body.appendChild(controlButton);
+        buttonContainer.appendChild(controlButton);
+
+        // Вставляем кнопку после вкладки "Accepted"
+        const parentLi = acceptedTab.closest('li');
+        if (parentLi && parentLi.nextSibling) {
+            parentLi.parentNode.insertBefore(buttonContainer, parentLi.nextSibling);
+        } else {
+            parentLi.parentNode.appendChild(buttonContainer);
+        }
+
+        buttonInserted = true;
     }
 
     // Удаляет кнопку
     function removeControlButton() {
-        if (controlButton) {
-            controlButton.remove();
+        if (controlButton && controlButton.parentNode) {
+            controlButton.parentNode.remove();
             controlButton = null;
+            buttonInserted = false;
         }
     }
 
@@ -90,7 +134,9 @@
 
     // Обновляет текст на кнопке
     function updateButtonText(text) {
-        controlButton.querySelectorAll('span').forEach(span => span.textContent = text);
+        if (controlButton) {
+            controlButton.querySelectorAll('span').forEach(span => span.textContent = text);
+        }
     }
 
     // Сброс кнопки в Start
@@ -165,8 +211,11 @@
 
     // Показывает кнопку, если вкладка "Terms" активна
     setInterval(() => {
-        if (isActiveTabTerms()) createControlButton();
-        else removeControlButton();
+        if (isActiveTabTerms()) {
+            createControlButton();
+        } else {
+            removeControlButton();
+        }
     }, 1000);
 
 })();
