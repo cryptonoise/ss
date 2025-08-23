@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         QHero Disambiguate Keywords
-// @version      2.1
+// @version      2.3
 // @author       Freem
 // @description  Уточнение ключевых слов на QHero
 // @match        https://qhero.com/*
@@ -11,29 +11,26 @@
     'use strict';
 
     const CONFIG = {
-        CLICK_DELAY_MS: 200,        // Задержка между кликами (в миллисекундах)
-        DONE_DISPLAY_TIME_MS: 3000, // Время отображения кнопки "Done" (в миллисекундах)
-        // Цвета кнопки
+        CLICK_DELAY_MS: 200,
+        DONE_DISPLAY_TIME_MS: 3000,
         COLORS: {
-            PLAY_BG: '#ffc0cb',     // Цвет фона в состоянии "Start"
-            PAUSE_BG: '#fd7e14',    // Цвет фона в состоянии "Pause"
-            DONE_BG: '#20c997',     // Цвет фона в состоянии "Done"
-            DISABLED_BG: '#ccc',    // Цвет фона в состоянии "Disabled"
-            BORDER: '#333',         // Цвет рамки кнопки
-            TEXT: '#000'            // Цвет текста
+            PLAY_BG: '#ffc0cb',
+            PAUSE_BG: '#fd7e14',
+            DONE_BG: '#20c997',
+            DISABLED_BG: '#ccc',
+            BORDER: '#333',
+            TEXT: '#000'
         },
         BUTTON: {
-            WIDTH: '80px',          // Ширина кнопки
-            HEIGHT: '30px'          // Высота кнопки
+            WIDTH: '80px',
+            HEIGHT: '30px'
         }
     };
 
     let isRunning = false;
     let controlButton = null;
-    let buttonInserted = false;
     let isTermsActive = false;
 
-    // Добавляет стили кнопки
     function injectStyles() {
         const style = document.createElement('style');
         style.textContent = `
@@ -62,13 +59,11 @@
             backface-visibility: hidden; transition: 0.3s;
         }
 
-        /* 3D transforms */
         .qhero-3d-btn span:nth-child(1) { transform: rotateX(360deg) translateZ(15px); }
         .qhero-3d-btn span:nth-child(2) { transform: rotateX(270deg) translateZ(15px); }
         .qhero-3d-btn span:nth-child(3) { transform: rotateX(180deg) translateZ(15px); }
         .qhero-3d-btn span:nth-child(4) { transform: rotateX(90deg) translateZ(15px); }
 
-        /* Button states */
         .qhero-play span { background: ${CONFIG.COLORS.PLAY_BG}; color: ${CONFIG.COLORS.TEXT}; }
         .qhero-pause span { background: ${CONFIG.COLORS.PAUSE_BG}; color: ${CONFIG.COLORS.TEXT}; }
         .qhero-done span { background: ${CONFIG.COLORS.DONE_BG}; color: ${CONFIG.COLORS.TEXT}; pointer-events: none; }
@@ -77,55 +72,66 @@
         document.head.appendChild(style);
     }
 
-    // Проверяет активна ли вкладка "Terms"
     function isActiveTabTerms() {
         return Array.from(document.querySelectorAll('li.active a'))
             .some(a => a.textContent.includes('Terms'));
     }
 
-    // Создаёт кнопку и вставляет её после вкладки "Accepted"
-    function createControlButton() {
-        // Проверяем, не создана ли уже кнопка
-        if (buttonInserted) return;
+    // Функция для поиска или создания контейнера для кнопки
+    function findOrCreateButtonContainer() {
+        // Сначала ищем существующий контейнер
+        let container = document.querySelector('.qhero-button-container');
 
-        // Ищем вкладку "Accepted"
-        const acceptedTab = Array.from(document.querySelectorAll('li a'))
-            .find(a => a.textContent.trim().includes('Accepted'));
+        if (!container) {
+            // Если контейнера нет, создаем новый
+            const acceptedTab = Array.from(document.querySelectorAll('li a'))
+                .find(a => a.textContent.trim().includes('Accepted'));
 
-        if (!acceptedTab) return;
+            if (!acceptedTab) return null;
 
-        // Создаем контейнер для кнопки
-        const buttonContainer = document.createElement('li');
-        buttonContainer.className = 'qhero-button-container';
+            container = document.createElement('li');
+            container.className = 'qhero-button-container';
 
-        // Создаем 3D кнопку
-        controlButton = document.createElement('div');
-        controlButton.className = 'qhero-3d-btn qhero-play';
-
-        for (let i = 0; i < 4; i++) {
-            const span = document.createElement('span');
-            span.textContent = '▶ Start';
-            controlButton.appendChild(span);
+            // Вставляем после вкладки "Accepted"
+            const parentLi = acceptedTab.closest('li');
+            if (parentLi && parentLi.nextSibling) {
+                parentLi.parentNode.insertBefore(container, parentLi.nextSibling);
+            } else {
+                parentLi.parentNode.appendChild(container);
+            }
         }
 
-        controlButton.addEventListener('click', handleButtonClick);
-        buttonContainer.appendChild(controlButton);
-
-        // Вставляем кнопку после вкладки "Accepted"
-        const parentLi = acceptedTab.closest('li');
-        if (parentLi && parentLi.nextSibling) {
-            parentLi.parentNode.insertBefore(buttonContainer, parentLi.nextSibling);
-        } else {
-            parentLi.parentNode.appendChild(buttonContainer);
-        }
-
-        buttonInserted = true;
-        updateButtonState(); // Устанавливаем начальное состояние
+        return container;
     }
 
-    // Обработчик клика по кнопке
+    // Функция для создания или обновления кнопки
+    function createOrUpdateControlButton() {
+        const container = findOrCreateButtonContainer();
+        if (!container) return;
+
+        // Если кнопка уже существует в контейнере, используем её
+        controlButton = container.querySelector('.qhero-3d-btn');
+
+        if (!controlButton) {
+            // Создаем 3D кнопку
+            controlButton = document.createElement('div');
+            controlButton.className = 'qhero-3d-btn qhero-play';
+
+            for (let i = 0; i < 4; i++) {
+                const span = document.createElement('span');
+                span.textContent = '▶ Start';
+                controlButton.appendChild(span);
+            }
+
+            controlButton.addEventListener('click', handleButtonClick);
+            container.appendChild(controlButton);
+        }
+
+        updateButtonState();
+    }
+
     function handleButtonClick() {
-        if (!isTermsActive) return; // Игнорируем клики если Terms не активна
+        if (!isTermsActive) return;
 
         isRunning = !isRunning;
         if (isRunning) {
@@ -137,11 +143,9 @@
         }
     }
 
-    // Обновляет состояние кнопки в зависимости от активности вкладки Terms
     function updateButtonState() {
         if (!controlButton) return;
 
-        // Не обновляем, если кнопка ещё в состоянии "Done"
         const wasDone = controlButton.classList.contains('qhero-done');
         if (wasDone) return;
 
@@ -163,14 +167,12 @@
         }
     }
 
-    // Обновляет текст на кнопке
     function updateButtonText(text) {
         if (controlButton) {
             controlButton.querySelectorAll('span').forEach(span => span.textContent = text);
         }
     }
 
-    // Сброс кнопки в Start
     function resetToStart() {
         if (controlButton && isTermsActive) {
             updateButtonText('▶ Start');
@@ -179,11 +181,10 @@
         }
     }
 
-    // Показывает "Done" и возвращается к "Start"
     function showDoneAndReset() {
         if (!controlButton || !isTermsActive) return;
 
-        isRunning = false; // Критически важно: процесс завершён
+        isRunning = false;
 
         updateButtonText('✔ Done');
         controlButton.className = 'qhero-3d-btn qhero-done';
@@ -198,7 +199,6 @@
     const delay = ms => new Promise(r => setTimeout(r, ms));
     const clickElement = el => el?.click();
 
-    // Обрабатывает следующий элемент
     async function processNextDisambiguation() {
         const all = Array.from(document.querySelectorAll('div.row.property.keyword'));
         const next = all.find(div =>
@@ -228,7 +228,6 @@
         return true;
     }
 
-    // Основной цикл
     async function loopProcessing() {
         while (isRunning && isTermsActive) {
             const didWork = await processNextDisambiguation();
@@ -243,10 +242,10 @@
     // === ИНИЦИАЛИЗАЦИЯ ===
     injectStyles();
 
-    // Периодически пытаемся создать кнопку и обновить её состояние
+    // Основной цикл проверки и обновления
     setInterval(() => {
-        createControlButton();   // Создаёт, если ещё нет
-        updateButtonState();     // Обновляет состояние, кроме состояния Done
+        createOrUpdateControlButton();
+        updateButtonState();
     }, 1000);
 
 })();
